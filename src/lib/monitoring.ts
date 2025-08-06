@@ -1,5 +1,15 @@
 import { DatabaseService } from './database';
 
+// Error severity levels
+const SEVERITY = {
+  LOW: 'low',
+  MEDIUM: 'medium',
+  HIGH: 'high',
+  CRITICAL: 'critical'
+} as const;
+
+type Severity = typeof SEVERITY[keyof typeof SEVERITY];
+
 // Comprehensive Error Handling and Monitoring System
 export class MonitoringService {
   private static errorCounts: Map<string, number> = new Map();
@@ -8,14 +18,7 @@ export class MonitoringService {
   private static readonly ALERT_COOLDOWN = 60 * 60 * 1000; // 1 hour cooldown
 
   // Error severity levels
-  static readonly SEVERITY = {
-    LOW: 'low',
-    MEDIUM: 'medium',
-    HIGH: 'high',
-    CRITICAL: 'critical'
-  } as const;
-
-  type Severity = typeof MonitoringService.SEVERITY[keyof typeof MonitoringService.SEVERITY];
+  static readonly SEVERITY = SEVERITY;
 
   // Log error with context and severity
   static async logError(
