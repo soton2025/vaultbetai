@@ -195,38 +195,39 @@ export default function Home() {
           )}
 
           {!betsError && bets.length > 0 && (
-            <div className="mb-16">
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="text-3xl font-bold text-white flex items-center gap-3 tracking-tight">
-                <Star className="w-8 h-8 text-accent-green animate-float" />
-                Free Daily Analysis
-              </h3>
-              {user?.freeBetUsedToday && (
-                <span className="text-accent-cyan text-sm bg-dark-100 px-4 py-2 rounded-full glass-effect border border-accent-cyan/20">
-                  Used today - come back tomorrow!
-                </span>
-              )}
-            </div>
-            
-            <div className="grid grid-cols-1 max-w-3xl mx-auto">
-              {freeBet ? (
-                <div className="animate-slide-up">
-                  <BetCard 
-                    bet={freeBet} 
-                    isLocked={user?.freeBetUsedToday}
-                    onUnlock={() => setShowSubscriptionModal(true)}
-                  />
+            <>
+              <div className="mb-16">
+                <div className="flex items-center justify-between mb-8">
+                  <h3 className="text-3xl font-bold text-white flex items-center gap-3 tracking-tight">
+                    <Star className="w-8 h-8 text-accent-green animate-float" />
+                    Free Daily Analysis
+                  </h3>
+                  {user?.freeBetUsedToday && (
+                    <span className="text-accent-cyan text-sm bg-dark-100 px-4 py-2 rounded-full glass-effect border border-accent-cyan/20">
+                      Used today - come back tomorrow!
+                    </span>
+                  )}
                 </div>
-              ) : (
-                <div className="text-center p-8 bg-dark-100 border border-gray-700/50 rounded-xl glass-effect">
-                  <div className="text-gray-300 font-medium mb-2">No free tip available today</div>
-                  <div className="text-gray-400 text-sm">Check back tomorrow for your free daily analysis!</div>
+                
+                <div className="grid grid-cols-1 max-w-3xl mx-auto">
+                  {freeBet ? (
+                    <div className="animate-slide-up">
+                      <BetCard 
+                        bet={freeBet} 
+                        isLocked={user?.freeBetUsedToday}
+                        onUnlock={() => setShowSubscriptionModal(true)}
+                      />
+                    </div>
+                  ) : (
+                    <div className="text-center p-8 bg-dark-100 border border-gray-700/50 rounded-xl glass-effect">
+                      <div className="text-gray-300 font-medium mb-2">No free tip available today</div>
+                      <div className="text-gray-400 text-sm">Check back tomorrow for your free daily analysis!</div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          </div>
+              </div>
 
-            <div>
+              <div>
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-3xl font-bold text-white flex items-center gap-3 tracking-tight">
                   <Crown className="w-8 h-8 text-accent-purple animate-glow-pulse" />
@@ -253,6 +254,7 @@ export default function Home() {
                 ))}
               </div>
             </div>
+            </>
           )}
         </div>
 
