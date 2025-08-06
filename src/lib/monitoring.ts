@@ -1,4 +1,4 @@
-import { DatabaseService } from './database';
+import { testConnection } from './database';
 
 // Error severity levels
 const SEVERITY = {
@@ -315,7 +315,7 @@ export class MonitoringService {
 
     try {
       // Database connectivity
-      checks.database = await DatabaseService.testConnection();
+      checks.database = await testConnection();
       if (!checks.database) {
         issues.push('Database connection failed');
       }
