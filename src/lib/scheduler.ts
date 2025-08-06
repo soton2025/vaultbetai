@@ -270,7 +270,7 @@ export class SchedulerService {
 
     try {
       // Database connection check
-      checks.database = await DatabaseService.testConnection();
+      checks.database = await testConnection();
 
       // Sports API check (with rate limiting consideration)
       try {
