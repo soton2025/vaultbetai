@@ -59,13 +59,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Type assertion to access subscription properties
+    const subscriptionData = subscription as any;
+    
     return NextResponse.json({
       success: true,
       subscription: {
-        id: subscription.id,
-        status: subscription.status,
-        cancel_at_period_end: subscription.cancel_at_period_end,
-        current_period_end: subscription.current_period_end,
+        id: subscriptionData.id,
+        status: subscriptionData.status,
+        cancel_at_period_end: subscriptionData.cancel_at_period_end,
+        current_period_end: subscriptionData.current_period_end,
       },
       message: 'Subscription will be cancelled at the end of the current billing period.',
     });
