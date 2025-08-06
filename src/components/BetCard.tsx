@@ -177,11 +177,11 @@ export default function BetCard({ bet, isLocked = false, onUnlock }: BetCardProp
           </div>
         </div>
 
-        {/* AI explanation */}
+        {/* Expert Analysis */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-3">
-            <Zap className="w-4 h-4 text-accent-purple" />
-            <span className="text-accent-purple text-sm font-semibold uppercase tracking-wider">AI Insight</span>
+            <Target className="w-4 h-4 text-accent-purple" />
+            <span className="text-accent-purple text-sm font-semibold uppercase tracking-wider">Expert Analysis</span>
           </div>
           <p className="text-gray-300 leading-relaxed">{bet.explanation}</p>
           <p className="text-xs text-gray-500 mt-3 italic">

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Zap, Filter, Crown, TrendingUp, Star, User } from 'lucide-react';
+import { Filter, Crown, TrendingUp, Star, User, Shield } from 'lucide-react';
 import Link from 'next/link';
 import BetCard from '@/components/BetCard';
 import SubscriptionModal from '@/components/SubscriptionModal';
@@ -9,6 +9,7 @@ import FilterPanel, { FilterState } from '@/components/FilterPanel';
 import BookmakerSection from '@/components/BookmakerSection';
 import DisclaimerBanner from '@/components/DisclaimerBanner';
 import Footer from '@/components/Footer';
+import VaultLogo from '@/components/VaultLogo';
 import { useUser } from '@/context/UserContext';
 import { mockBets } from '@/data/mockBets';
 import { stripePromise } from '@/lib/stripe';
@@ -58,8 +59,8 @@ export default function Home() {
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-accent-purple/20 border-t-accent-purple mx-auto mb-6"></div>
             <div className="animate-ping absolute inset-0 rounded-full h-16 w-16 border-2 border-accent-pink/30 mx-auto"></div>
           </div>
-          <div className="text-white text-xl font-medium">Loading AI Betting Tips...</div>
-          <div className="text-gray-400 text-sm mt-2">Analyzing market data</div>
+          <div className="text-white text-xl font-medium">Loading Vault Bets...</div>
+          <div className="text-gray-400 text-sm mt-2">Securing your insights</div>
         </div>
       </div>
     );
@@ -71,12 +72,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-accent-purple via-accent-pink to-accent-green rounded-xl flex items-center justify-center shadow-premium animate-glow-pulse">
-                <Zap className="w-7 h-7 text-white" />
-              </div>
+              <VaultLogo size={48} className="animate-glow-pulse" />
               <div>
-                <h1 className="text-3xl font-bold text-white tracking-tight">AI Betting Tips</h1>
-                <p className="text-accent-cyan text-sm font-medium">Expert predictions powered by AI</p>
+                <h1 className="text-3xl font-bold text-white tracking-tight">Vault Bets</h1>
+                <p className="text-accent-cyan text-sm font-medium">Premium insights secured for success</p>
               </div>
             </div>
             
@@ -115,10 +114,10 @@ export default function Home() {
         <div className="mb-16">
           <div className="text-center mb-12">
             <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight leading-tight">
-              Today&apos;s <span className="text-premium">AI-Generated</span> Insights
+              Today&apos;s <span className="text-premium">Premium</span> Insights
             </h2>
             <p className="text-gray-300 text-xl max-w-3xl mx-auto leading-relaxed font-light">
-              AI-powered sports analysis and predictions for educational purposes. Not professional betting advice.
+              Expert analysis and data-driven predictions for educational purposes. Not professional betting advice.
             </p>
           </div>
 
@@ -152,7 +151,7 @@ export default function Home() {
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-3xl font-bold text-white flex items-center gap-3 tracking-tight">
                 <Crown className="w-8 h-8 text-accent-purple animate-glow-pulse" />
-                Premium AI Insights
+                Premium Expert Insights
               </h3>
               <div className="text-accent-purple text-sm font-medium bg-accent-purple/10 px-4 py-2 rounded-full border border-accent-purple/20">
                 {user?.hasActiveSubscription ? '5 insights available' : 'Unlock with premium'}
@@ -183,7 +182,7 @@ export default function Home() {
           <div className="max-w-3xl mx-auto">
             <h3 className="text-4xl font-bold text-white mb-6 tracking-tight">Ready to Win More?</h3>
             <p className="text-gray-300 text-lg mb-10 leading-relaxed">
-              Join thousands of smart bettors who trust our AI-powered predictions for consistent profits
+              Join thousands of smart bettors who trust our expert analysis for consistent profits
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
               <div className="flex flex-col items-center gap-3 p-6 glass-effect rounded-xl border border-accent-green/20">
@@ -192,9 +191,9 @@ export default function Home() {
                 <span className="text-gray-300 font-medium">Win Rate</span>
               </div>
               <div className="flex flex-col items-center gap-3 p-6 glass-effect rounded-xl border border-accent-cyan/20">
-                <Star className="w-8 h-8 text-accent-cyan" />
-                <span className="text-2xl font-bold text-accent-cyan">AI</span>
-                <span className="text-gray-300 font-medium">Powered Analysis</span>
+                <Shield className="w-8 h-8 text-accent-cyan" />
+                <span className="text-2xl font-bold text-accent-cyan">Expert</span>
+                <span className="text-gray-300 font-medium">Data Analysis</span>
               </div>
               <div className="flex flex-col items-center gap-3 p-6 glass-effect rounded-xl border border-accent-pink/20">
                 <Crown className="w-8 h-8 text-accent-pink" />

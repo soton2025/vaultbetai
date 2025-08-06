@@ -9,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "AI Betting Tips - Expert Predictions with AI Analysis",
-  description: "Get AI-powered betting tips with detailed analysis, confidence scores, and expert picks. Daily free tips plus premium subscription for advanced features.",
+  title: "Vault Bets - Premium Betting Insights",
+  description: "Unlock premium betting insights with expert analysis, confidence scores, and professional picks. Daily free analysis plus premium subscription for detailed breakdowns.",
 };
 
 export default function RootLayout({

@@ -14,7 +14,7 @@ import {
   AlertTriangle,
   Crown,
   Calendar,
-  Zap,
+  Shield,
   CheckCircle,
   XCircle,
   Clock,
@@ -231,11 +231,11 @@ export default function BetAnalysisPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Column - Main Analysis */}
             <div className="lg:col-span-2 space-y-8">
-              {/* AI Insight */}
+              {/* Expert Analysis */}
               <div className="bg-gradient-to-br from-dark-100 to-dark-200 rounded-2xl p-6 glass-effect-strong border border-gray-700/50">
                 <div className="flex items-center gap-2 mb-4">
-                  <Zap className="w-5 h-5 text-accent-purple" />
-                  <h2 className="text-xl font-bold text-white">AI Analysis</h2>
+                  <Shield className="w-5 h-5 text-accent-purple" />
+                  <h2 className="text-xl font-bold text-white">Expert Analysis</h2>
                 </div>
                 <p className="text-gray-300 leading-relaxed mb-4">{bet.explanation}</p>
                 <div className="bg-dark-300/50 rounded-xl p-4">
