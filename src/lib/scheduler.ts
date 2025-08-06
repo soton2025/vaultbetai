@@ -6,6 +6,7 @@ import { DatabaseService, testConnection } from './database';
 // Scheduling Service for Automated Tasks
 export class SchedulerService {
   private static jobs: Map<string, cron.ScheduledTask> = new Map();
+  private static jobStatus: Map<string, boolean> = new Map();
   private static isInitialized = false;
 
   // Initialize all scheduled jobs
@@ -102,6 +103,7 @@ export class SchedulerService {
     });
 
     this.jobs.set('dailyTipGeneration', task);
+    this.jobStatus.set('dailyTipGeneration', true);
     task.start();
     
     console.log(`📅 Daily tip generation scheduled for ${time} UTC`);
@@ -128,6 +130,7 @@ export class SchedulerService {
     });
 
     this.jobs.set('oddsUpdates', task);
+    this.jobStatus.set('oddsUpdates', true);
     task.start();
     
     console.log(`📊 Odds updates scheduled every ${intervalMinutes} minutes`);
@@ -234,6 +237,7 @@ export class SchedulerService {
     });
 
     this.jobs.set('dataCleanup', task);
+    this.jobStatus.set('dataCleanup', true);
     task.start();
     
     console.log('🧹 Data cleanup scheduled for 2:00 AM UTC daily');
@@ -253,6 +257,7 @@ export class SchedulerService {
     });
 
     this.jobs.set('healthCheck', task);
+    this.jobStatus.set('healthCheck', true);
     task.start();
     
     console.log('❤️ Health checks scheduled every 15 minutes');
@@ -328,6 +333,7 @@ export class SchedulerService {
     });
 
     this.jobs.set('performanceTracking', task);
+    this.jobStatus.set('performanceTracking', true);
     task.start();
     
     console.log('📈 Performance tracking scheduled daily at midnight UTC');
@@ -389,6 +395,7 @@ export class SchedulerService {
     const job = this.jobs.get(jobName);
     if (job) {
       job.start();
+      this.jobStatus.set(jobName, true);
       console.log(`▶️ Started job: ${jobName}`);
     } else {
       throw new Error(`Job not found: ${jobName}`);
@@ -399,6 +406,7 @@ export class SchedulerService {
     const job = this.jobs.get(jobName);
     if (job) {
       job.stop();
+      this.jobStatus.set(jobName, false);
       console.log(`⏹️ Stopped job: ${jobName}`);
     } else {
       throw new Error(`Job not found: ${jobName}`);
@@ -408,17 +416,19 @@ export class SchedulerService {
   static async stopAllJobs() {
     for (const [name, job] of this.jobs) {
       job.stop();
+      this.jobStatus.set(name, false);
       console.log(`🛑 Stopped job: ${name}`);
     }
     this.jobs.clear();
+    this.jobStatus.clear();
     this.isInitialized = false;
     console.log('🛑 All scheduled jobs stopped');
   }
 
   static getJobStatus() {
     const status: { [key: string]: boolean } = {};
-    for (const [name, job] of this.jobs) {
-      status[name] = job.getStatus() === 'scheduled';
+    for (const [name] of this.jobs) {
+      status[name] = this.jobStatus.get(name) || false;
     }
     return status;
   }
