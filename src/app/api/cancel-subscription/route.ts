@@ -58,17 +58,14 @@ export async function POST(req: NextRequest) {
         { status: 404 }
       );
     }
-
-    // Type assertion to access subscription properties
-    const subscriptionData = subscription as Stripe.Subscription;
     
     return NextResponse.json({
       success: true,
       subscription: {
-        id: subscriptionData.id,
-        status: subscriptionData.status,
-        cancel_at_period_end: subscriptionData.cancel_at_period_end,
-        current_period_end: subscriptionData.current_period_end,
+        id: subscription!.id,
+        status: subscription!.status,
+        cancel_at_period_end: subscription!.cancel_at_period_end,
+        current_period_end: (subscription! as Stripe.Subscription).current_period_end,
       },
       message: 'Subscription will be cancelled at the end of the current billing period.',
     });
