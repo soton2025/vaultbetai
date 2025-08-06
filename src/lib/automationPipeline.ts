@@ -204,8 +204,27 @@ export class AutomationPipeline {
       
       const startTime = Date.now();
       
+      // Prepare match data with correct field names for AnalysisEngine
+      const matchForAnalysis = {
+        ...match,
+        homeTeamId: matchUuid, // This should be the home team ID, let me get it properly
+        awayTeamId: matchUuid, // This should be the away team ID, let me get it properly  
+        venue: { city: match.venue || 'London' }
+      };
+      
+      // Get the proper team IDs from database
+      const matchDetails = await DatabaseService.query(
+        'SELECT home_team_id, away_team_id FROM matches WHERE id = $1',
+        [matchUuid]
+      );
+      
+      if (matchDetails.rows.length > 0) {
+        matchForAnalysis.homeTeamId = matchDetails.rows[0].home_team_id;
+        matchForAnalysis.awayTeamId = matchDetails.rows[0].away_team_id;
+      }
+      
       // Run comprehensive analysis
-      const analysis = await AnalysisEngine.analyzeMatch(match);
+      const analysis = await AnalysisEngine.analyzeMatch(matchForAnalysis);
       const executionTime = Date.now() - startTime;
       
       // Generate tips from predictions
@@ -464,22 +483,83 @@ export class AutomationPipeline {
         return existingMatch.rows[0].id;
       }
       
-      // If match doesn't exist, we need to create it
-      // For now, let's create a simplified match record
-      // TODO: This should properly handle leagues and teams
+      // Ensure league exists
+      let leagueId = await this.ensureLeagueInDatabase(match.league, match.leagueId);
+      
+      // Ensure home team exists
+      let homeTeamId = await this.ensureTeamInDatabase(match.homeTeam, leagueId);
+      
+      // Ensure away team exists  
+      let awayTeamId = await this.ensureTeamInDatabase(match.awayTeam, leagueId);
+      
+      // Create match with proper foreign key references
       const result = await DatabaseService.query(`
-        INSERT INTO matches (api_id, match_date, venue, status) 
-        VALUES ($1, $2, $3, 'scheduled') 
+        INSERT INTO matches (api_id, league_id, home_team_id, away_team_id, match_date, venue, status) 
+        VALUES ($1, $2, $3, $4, $5, $6, 'scheduled') 
         RETURNING id
-      `, [match.apiId, match.matchDate, match.venue || 'TBD']);
+      `, [match.apiId, leagueId, homeTeamId, awayTeamId, match.matchDate, match.venue || 'TBD']);
       
       return result.rows[0].id;
       
     } catch (error) {
       console.error('Error ensuring match in database:', error);
-      // As a fallback, return the API ID as string for now
-      // This will still cause UUID errors but keeps the system running
-      return match.apiId;
+      throw error; // Don't fallback to API ID as it causes UUID errors
+    }
+  }
+
+  // Helper method to ensure league exists in database
+  private static async ensureLeagueInDatabase(leagueName: string, apiId: string): Promise<string> {
+    try {
+      // Check if league already exists
+      const existingLeague = await DatabaseService.query(
+        'SELECT id FROM leagues WHERE name = $1 OR api_id = $2',
+        [leagueName, apiId]
+      );
+      
+      if (existingLeague.rows.length > 0) {
+        return existingLeague.rows[0].id;
+      }
+      
+      // Create new league
+      const result = await DatabaseService.query(`
+        INSERT INTO leagues (name, api_id, country, is_active) 
+        VALUES ($1, $2, $3, true) 
+        RETURNING id
+      `, [leagueName, apiId, 'England']); // Default to England for UK leagues
+      
+      return result.rows[0].id;
+      
+    } catch (error) {
+      console.error('Error ensuring league in database:', error);
+      throw error;
+    }
+  }
+
+  // Helper method to ensure team exists in database
+  private static async ensureTeamInDatabase(teamName: string, leagueId: string): Promise<string> {
+    try {
+      // Check if team already exists
+      const existingTeam = await DatabaseService.query(
+        'SELECT id FROM teams WHERE name = $1',
+        [teamName]
+      );
+      
+      if (existingTeam.rows.length > 0) {
+        return existingTeam.rows[0].id;
+      }
+      
+      // Create new team
+      const result = await DatabaseService.query(`
+        INSERT INTO teams (name, league_id) 
+        VALUES ($1, $2) 
+        RETURNING id
+      `, [teamName, leagueId]);
+      
+      return result.rows[0].id;
+      
+    } catch (error) {
+      console.error('Error ensuring team in database:', error);
+      throw error;
     }
   }
 }

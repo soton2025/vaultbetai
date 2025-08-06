@@ -7,12 +7,13 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '10');
     const premiumOnly = searchParams.get('premium') === 'true';
+    const includeUnpublished = searchParams.get('debug') === 'true';
 
     // Query real betting tips from database with proper JOINs
     let query = `
       SELECT 
         bt.id, bt.bet_type, bt.recommended_odds, bt.confidence_score, bt.explanation,
-        bt.is_premium, bt.published_at, 
+        bt.is_premium, bt.published_at, bt.is_published,
         m.match_date, ht.name as home_team, at.name as away_team, l.name as league,
         ta.value_rating, ta.implied_probability, ta.model_probability, ta.risk_factors,
         ta.weather_impact, ta.venue_advantage_percentage, ta.market_movement, ta.betting_volume
@@ -22,10 +23,12 @@ export async function GET(request: NextRequest) {
       JOIN teams at ON m.away_team_id = at.id
       JOIN leagues l ON m.league_id = l.id
       LEFT JOIN tip_analysis ta ON bt.id = ta.tip_id
-      WHERE bt.published_at IS NOT NULL 
-      AND bt.is_published = true
-      AND m.match_date > NOW()
+      WHERE m.match_date > NOW()
     `;
+
+    if (!includeUnpublished) {
+      query += ` AND bt.published_at IS NOT NULL AND bt.is_published = true`;
+    }
     
     const queryParams: any[] = [];
     

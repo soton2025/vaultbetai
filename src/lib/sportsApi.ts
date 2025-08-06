@@ -4,6 +4,7 @@ import { DatabaseService } from './database';
 // Sports API Integration Service
 export class SportsApiService {
   private static theSportsDbBaseUrl = 'https://www.thesportsdb.com/api/v1/json';
+  private static footballDataBaseUrl = 'https://api.football-data.org/v4';
   private static oddsApiBaseUrl = 'https://api.the-odds-api.com/v4';
   
   // Rate limiting tracking
@@ -28,8 +29,88 @@ export class SportsApiService {
     this.apiCalls[apiProvider].push(now);
   }
 
-  // Fetch upcoming matches from TheSportsDB
+  // Fetch upcoming matches from Football-Data.org (primary) with TheSportsDB fallback
   static async getUpcomingMatches(leagueId?: string, days: number = 7) {
+    try {
+      // Try Football-Data.org first for better coverage
+      const footballDataMatches = await this.getMatchesFromFootballData(days);
+      if (footballDataMatches.length > 0) {
+        console.log(`✅ Using Football-Data.org: ${footballDataMatches.length} matches found`);
+        return footballDataMatches;
+      }
+      
+      // Fallback to TheSportsDB
+      console.log('⚠️ No matches from Football-Data.org, trying TheSportsDB fallback...');
+      return await this.getMatchesFromTheSportsDB(leagueId, days);
+      
+    } catch (error) {
+      console.error('Error fetching matches:', error);
+      // Try fallback if main API fails
+      try {
+        console.log('🔄 Attempting TheSportsDB fallback...');
+        return await this.getMatchesFromTheSportsDB(leagueId, days);
+      } catch (fallbackError) {
+        console.error('Both APIs failed:', fallbackError);
+        return [];
+      }
+    }
+  }
+
+  // Fetch matches from Football-Data.org API
+  static async getMatchesFromFootballData(days: number = 7) {
+    try {
+      await this.checkRateLimit('football-data', 10, 60 * 1000); // 10 calls per minute
+      
+      const apiKey = process.env.FOOTBALL_DATA_API_KEY;
+      if (!apiKey) {
+        console.log('⚠️ Football-Data API key not configured');
+        return [];
+      }
+
+      const competitions = ['PL', 'ELC']; // Premier League, Championship
+      const allMatches = [];
+      
+      for (const competitionCode of competitions) {
+        try {
+          const url = `${this.footballDataBaseUrl}/competitions/${competitionCode}/matches`;
+          
+          console.log(`🌐 Football-Data API: ${competitionCode}`);
+          const response = await axios.get(url, {
+            headers: { 'X-Auth-Token': apiKey },
+            params: {
+              dateFrom: new Date().toISOString().split('T')[0],
+              dateTo: new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+            }
+          });
+
+          await DatabaseService.logApiUsage('football-data', 'matches', 0);
+          
+          const matches = response.data.matches || [];
+          console.log(`📊 ${competitionCode}: ${matches.length} matches found`);
+          
+          if (matches.length > 0) {
+            const transformedMatches = this.transformFootballDataMatches(matches, competitionCode);
+            allMatches.push(...transformedMatches);
+          }
+          
+          // Rate limiting between competitions
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+        } catch (error) {
+          console.error(`❌ Error fetching ${competitionCode}:`, error.response?.status || error.message);
+        }
+      }
+      
+      return allMatches;
+      
+    } catch (error) {
+      console.error('Error fetching matches from Football-Data.org:', error);
+      return [];
+    }
+  }
+
+  // Original TheSportsDB method as fallback
+  static async getMatchesFromTheSportsDB(leagueId?: string, days: number = 7) {
     try {
       await this.checkRateLimit('thesportsdb', 100, 60 * 60 * 1000); // 100 calls per hour
       
@@ -43,12 +124,11 @@ export class SportsApiService {
         url += '?id=4328';
       }
 
-      console.log(`🌐 API URL: ${url}`);
+      console.log(`🌐 TheSportsDB API URL: ${url}`);
       const response = await axios.get(url);
       await DatabaseService.logApiUsage('thesportsdb', 'eventsnextleague', 0);
       
-      console.log(`📡 API Response status: ${response.status}`);
-      console.log(`📊 API Response events count: ${response.data?.events?.length || 0}`);
+      console.log(`📡 TheSportsDB Response: ${response.data?.events?.length || 0} events`);
       
       if (response.data?.events) {
         const transformedMatches = this.transformTheSportsDbMatches(response.data.events, days);
@@ -56,7 +136,6 @@ export class SportsApiService {
         return transformedMatches;
       }
       
-      console.log('⚠️ No events found in API response');
       return [];
     } catch (error) {
       console.error('Error fetching matches from TheSportsDB:', error);
@@ -64,7 +143,28 @@ export class SportsApiService {
     }
   }
 
-  // Transform TheSportsDB match data to our format
+  // Transform Football-Data.org match data to our format
+  private static transformFootballDataMatches(matches: any[], competitionCode: string) {
+    const now = new Date();
+    
+    return matches
+      .filter(match => {
+        const matchDate = new Date(match.utcDate);
+        return matchDate > now && match.status === 'TIMED';
+      })
+      .map(match => ({
+        apiId: match.id.toString(),
+        homeTeam: match.homeTeam.name,
+        awayTeam: match.awayTeam.name,
+        matchDate: new Date(match.utcDate),
+        league: match.competition.name,
+        leagueId: competitionCode,
+        venue: match.venue || 'TBD',
+        season: match.season.startDate.split('-')[0] // Extract year from season
+      }));
+  }
+
+  // Transform TheSportsDB match data to our format  
   private static transformTheSportsDbMatches(events: any[], days: number) {
     const now = new Date();
     const futureLimit = new Date(now.getTime() + (days * 24 * 60 * 60 * 1000));

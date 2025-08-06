@@ -435,6 +435,9 @@ export class AnalysisEngine {
     // Add bookmaker margin (typically 5-10%)
     baseOdds = baseOdds * 1.07;
     
+    // Ensure odds stay within acceptable range for quality control (1.2 - 10.0)
+    baseOdds = Math.max(1.2, Math.min(10.0, baseOdds));
+    
     // Round to typical betting odds
     return Math.round(baseOdds * 20) / 20; // Round to nearest 0.05
   }
