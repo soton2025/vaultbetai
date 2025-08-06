@@ -99,10 +99,9 @@ export class AutomationPipeline {
     const matches = [];
     const leagues = [
       SportsApiService.LEAGUES.PREMIER_LEAGUE,
-      SportsApiService.LEAGUES.LA_LIGA,
-      SportsApiService.LEAGUES.BUNDESLIGA,
-      SportsApiService.LEAGUES.SERIE_A,
-      SportsApiService.LEAGUES.LIGUE_1
+      SportsApiService.LEAGUES.CHAMPIONSHIP,
+      SportsApiService.LEAGUES.LEAGUE_ONE,
+      SportsApiService.LEAGUES.LEAGUE_TWO
     ];
     
     // Get matches from each league
@@ -129,10 +128,9 @@ export class AutomationPipeline {
     // League importance
     const leaguePriorities = {
       [SportsApiService.LEAGUES.PREMIER_LEAGUE]: 10,
-      [SportsApiService.LEAGUES.LA_LIGA]: 9,
-      [SportsApiService.LEAGUES.BUNDESLIGA]: 8,
-      [SportsApiService.LEAGUES.SERIE_A]: 7,
-      [SportsApiService.LEAGUES.LIGUE_1]: 6
+      [SportsApiService.LEAGUES.CHAMPIONSHIP]: 8,
+      [SportsApiService.LEAGUES.LEAGUE_ONE]: 6,
+      [SportsApiService.LEAGUES.LEAGUE_TWO]: 5
     };
     priority += leaguePriorities[leagueId as keyof typeof leaguePriorities] || 5;
     

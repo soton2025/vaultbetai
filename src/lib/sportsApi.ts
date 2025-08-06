@@ -258,6 +258,9 @@ export class SportsApiService {
   // Available sports and leagues
   static readonly LEAGUES = {
     PREMIER_LEAGUE: '4328',
+    CHAMPIONSHIP: '4329',
+    LEAGUE_ONE: '4396',
+    LEAGUE_TWO: '4397',
     LA_LIGA: '4335',
     BUNDESLIGA: '4331',
     SERIE_A: '4332',
@@ -267,6 +270,9 @@ export class SportsApiService {
 
   static readonly SPORTS_ODDS_API = {
     PREMIER_LEAGUE: 'soccer_epl',
+    CHAMPIONSHIP: 'soccer_efl_champ',
+    LEAGUE_ONE: 'soccer_england_league1',
+    LEAGUE_TWO: 'soccer_england_league2',
     LA_LIGA: 'soccer_spain_la_liga',
     BUNDESLIGA: 'soccer_germany_bundesliga',
     SERIE_A: 'soccer_italy_serie_a',
