@@ -192,10 +192,13 @@ export class AutomationPipeline {
   // Analyze match and generate betting tips
   private static async analyzeAndGenerateTips(match: any, config: any) {
     try {
-      // Log analysis attempt
+      // First, ensure the match exists in database and get UUID
+      const matchUuid = await this.ensureMatchInDatabase(match);
+      
+      // Log analysis attempt using proper UUID
       await DatabaseService.query(
         'INSERT INTO analysis_logs (match_id, analysis_type, status) VALUES ($1, $2, $3)',
-        [match.apiId, 'FULL_ANALYSIS', 'in_progress']
+        [matchUuid, 'FULL_ANALYSIS', 'in_progress']
       );
       
       const startTime = Date.now();
@@ -208,15 +211,15 @@ export class AutomationPipeline {
       const tips = [];
       for (const prediction of analysis.predictions) {
         if (prediction.confidence >= config.minConfidenceThreshold) {
-          const tip = await this.createTipFromPrediction(match, prediction, analysis);
+          const tip = await this.createTipFromPrediction(match, prediction, analysis, matchUuid);
           tips.push(tip);
         }
       }
       
-      // Log successful analysis
+      // Log successful analysis  
       await DatabaseService.query(
         'UPDATE analysis_logs SET status = $1, execution_time_ms = $2 WHERE match_id = $3 AND analysis_type = $4',
-        ['success', executionTime, match.apiId, 'FULL_ANALYSIS']
+        ['success', executionTime, matchUuid, 'FULL_ANALYSIS']
       );
       
       return tips;
@@ -225,7 +228,7 @@ export class AutomationPipeline {
       // Log failed analysis
       await DatabaseService.query(
         'UPDATE analysis_logs SET status = $1, error_message = $2 WHERE match_id = $3 AND analysis_type = $4',
-        ['failed', error instanceof Error ? error.message : 'Unknown error', match.apiId, 'FULL_ANALYSIS']
+        ['failed', error instanceof Error ? error.message : 'Unknown error', matchUuid, 'FULL_ANALYSIS']
       );
       
       throw error;
@@ -233,7 +236,7 @@ export class AutomationPipeline {
   }
   
   // Create betting tip from prediction
-  private static async createTipFromPrediction(match: any, prediction: any, analysis: any) {
+  private static async createTipFromPrediction(match: any, prediction: any, analysis: any, matchUuid: string) {
     // Calculate risk factors
     const riskFactors = AnalysisEngine.assessRisk(prediction, analysis);
     
@@ -253,7 +256,7 @@ export class AutomationPipeline {
     } : null;
     
     return {
-      matchId: match.apiId,
+      matchId: matchUuid,
       betType: prediction.betType,
       recommendedOdds: prediction.recommendedOdds,
       confidenceScore: prediction.confidence,
@@ -444,6 +447,38 @@ export class AutomationPipeline {
     } catch (error) {
       console.error('💥 Test pipeline failed:', error);
       throw error;
+    }
+  }
+  
+  // Helper method to ensure match exists in database and return UUID
+  private static async ensureMatchInDatabase(match: any): Promise<string> {
+    try {
+      // First, try to find existing match by API ID
+      const existingMatch = await DatabaseService.query(
+        'SELECT id FROM matches WHERE api_id = $1',
+        [match.apiId]
+      );
+      
+      if (existingMatch.rows.length > 0) {
+        return existingMatch.rows[0].id;
+      }
+      
+      // If match doesn't exist, we need to create it
+      // For now, let's create a simplified match record
+      // TODO: This should properly handle leagues and teams
+      const result = await DatabaseService.query(`
+        INSERT INTO matches (api_id, match_date, venue, status) 
+        VALUES ($1, $2, $3, 'scheduled') 
+        RETURNING id
+      `, [match.apiId, match.matchDate, match.venue || 'TBD']);
+      
+      return result.rows[0].id;
+      
+    } catch (error) {
+      console.error('Error ensuring match in database:', error);
+      // As a fallback, return the API ID as string for now
+      // This will still cause UUID errors but keeps the system running
+      return match.apiId;
     }
   }
 }

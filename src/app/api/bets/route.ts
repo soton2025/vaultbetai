@@ -8,25 +8,32 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const premiumOnly = searchParams.get('premium') === 'true';
 
-    // Query real betting tips from database
+    // Query real betting tips from database with proper JOINs
     let query = `
       SELECT 
-        id, bet_type, recommended_odds, confidence_score, explanation,
-        is_premium, published_at, match_date, home_team, away_team, league,
-        value_rating, implied_probability, model_probability, risk_factors,
-        weather_impact, venue_advantage_percentage, market_movement, betting_volume
-      FROM betting_tips 
-      WHERE published_at IS NOT NULL 
-      AND match_date > NOW()
+        bt.id, bt.bet_type, bt.recommended_odds, bt.confidence_score, bt.explanation,
+        bt.is_premium, bt.published_at, 
+        m.match_date, ht.name as home_team, at.name as away_team, l.name as league,
+        ta.value_rating, ta.implied_probability, ta.model_probability, ta.risk_factors,
+        ta.weather_impact, ta.venue_advantage_percentage, ta.market_movement, ta.betting_volume
+      FROM betting_tips bt
+      JOIN matches m ON bt.match_id = m.id
+      JOIN teams ht ON m.home_team_id = ht.id
+      JOIN teams at ON m.away_team_id = at.id
+      JOIN leagues l ON m.league_id = l.id
+      LEFT JOIN tip_analysis ta ON bt.id = ta.tip_id
+      WHERE bt.published_at IS NOT NULL 
+      AND bt.is_published = true
+      AND m.match_date > NOW()
     `;
     
     const queryParams: any[] = [];
     
     if (premiumOnly) {
-      query += ` AND is_premium = true`;
+      query += ` AND bt.is_premium = true`;
     }
     
-    query += ` ORDER BY published_at DESC LIMIT $${queryParams.length + 1}`;
+    query += ` ORDER BY bt.published_at DESC LIMIT $${queryParams.length + 1}`;
     queryParams.push(limit);
 
     const result = await DatabaseService.query(query, queryParams);
