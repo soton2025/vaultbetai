@@ -226,33 +226,33 @@ export default function Home() {
             </div>
           </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="text-3xl font-bold text-white flex items-center gap-3 tracking-tight">
-                <Crown className="w-8 h-8 text-accent-purple animate-glow-pulse" />
-                Premium Expert Insights
-              </h3>
-              <div className="text-accent-purple text-sm font-medium bg-accent-purple/10 px-4 py-2 rounded-full border border-accent-purple/20">
-                {user?.hasActiveSubscription ? `${premiumBets.length} insights available` : 'Unlock with premium'}
+            <div>
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-3xl font-bold text-white flex items-center gap-3 tracking-tight">
+                  <Crown className="w-8 h-8 text-accent-purple animate-glow-pulse" />
+                  Premium Expert Insights
+                </h3>
+                <div className="text-accent-purple text-sm font-medium bg-accent-purple/10 px-4 py-2 rounded-full border border-accent-purple/20">
+                  {user?.hasActiveSubscription ? `${premiumBets.length} insights available` : 'Unlock with premium'}
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {premiumBets.map((bet, index) => (
+                  <div 
+                    key={bet.id} 
+                    className="animate-slide-up"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    <BetCard
+                      bet={bet}
+                      isLocked={!user?.hasActiveSubscription}
+                      onUnlock={() => setShowSubscriptionModal(true)}
+                    />
+                  </div>
+                ))}
               </div>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {premiumBets.map((bet, index) => (
-                <div 
-                  key={bet.id} 
-                  className="animate-slide-up"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <BetCard
-                    bet={bet}
-                    isLocked={!user?.hasActiveSubscription}
-                    onUnlock={() => setShowSubscriptionModal(true)}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
           )}
         </div>
 
