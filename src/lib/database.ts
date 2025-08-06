@@ -27,10 +27,11 @@ export async function testConnection() {
     return true;
   } catch (error) {
     console.error('❌ Database connection failed:', error);
-    if (error.message?.includes('password')) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (errorMessage.includes('password')) {
       console.error('💡 Check your DATABASE_URL and ensure password is correct');
     }
-    if (error.message?.includes('ENOTFOUND') || error.message?.includes('timeout')) {
+    if (errorMessage.includes('ENOTFOUND') || errorMessage.includes('timeout')) {
       console.error('💡 Check your internet connection and database host');
     }
     return false;
