@@ -191,9 +191,10 @@ export class AutomationPipeline {
   
   // Analyze match and generate betting tips
   private static async analyzeAndGenerateTips(match: any, config: any) {
+    // First, ensure the match exists in database and get UUID
+    const matchUuid = await this.ensureMatchInDatabase(match);
+    
     try {
-      // First, ensure the match exists in database and get UUID
-      const matchUuid = await this.ensureMatchInDatabase(match);
       
       // Log analysis attempt using proper UUID
       await DatabaseService.query(
