@@ -183,3 +183,5 @@ This project is proprietary. All rights reserved.
 ---
 
 Built with ❤️ using Next.js, Tailwind CSS, and Stripe
+
+# Deployment Fix
