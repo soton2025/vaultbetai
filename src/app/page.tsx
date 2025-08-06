@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Filter, Crown, TrendingUp, Star, User, Shield } from 'lucide-react';
 import Link from 'next/link';
 import BetCard from '@/components/BetCard';
@@ -11,7 +11,7 @@ import DisclaimerBanner from '@/components/DisclaimerBanner';
 import Footer from '@/components/Footer';
 import VaultLogo from '@/components/VaultLogo';
 import { useUser } from '@/context/UserContext';
-import { mockBets } from '@/data/mockBets';
+import { BetTip } from '@/types';
 import { stripePromise } from '@/lib/stripe';
 
 export default function Home() {
@@ -25,9 +25,56 @@ export default function Home() {
     minOdds: 1.0,
     maxOdds: 10.0,
   });
+  
+  const [bets, setBets] = useState<BetTip[]>([]);
+  const [betsLoading, setBetsLoading] = useState(true);
+  const [betsError, setBetsError] = useState<string | null>(null);
 
-  const freeBet = mockBets[0];
-  const premiumBets = mockBets.slice(1);
+  // Fetch betting tips from API
+  useEffect(() => {
+    const fetchBets = async () => {
+      try {
+        setBetsLoading(true);
+        setBetsError(null);
+        
+        const response = await fetch('/api/bets?limit=10');
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          // Transform API response to match frontend BetTip interface
+          const transformedBets: BetTip[] = data.data.map((bet: any) => ({
+            id: bet.id,
+            type: bet.bet_type,
+            odds: bet.recommended_odds,
+            confidence: bet.confidence_score,
+            explanation: bet.explanation,
+            match: {
+              homeTeam: bet.home_team,
+              awayTeam: bet.away_team,
+              league: bet.league,
+              date: bet.match_date
+            },
+            affiliateLink: 'https://bet365.com/affiliate-link',
+            isPremium: bet.is_premium
+          }));
+          
+          setBets(transformedBets);
+        } else {
+          setBetsError('Failed to load betting tips');
+        }
+      } catch (error) {
+        console.error('Error fetching bets:', error);
+        setBetsError('Unable to connect to betting service');
+      } finally {
+        setBetsLoading(false);
+      }
+    };
+
+    fetchBets();
+  }, []);
+
+  const freeBet = bets.find(bet => !bet.isPremium);
+  const premiumBets = bets.filter(bet => bet.isPremium);
 
   const handleSubscribe = async () => {
     try {
@@ -51,7 +98,7 @@ export default function Home() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || betsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-dark-900 via-gray-900 to-dark-800">
         <div className="text-center">
@@ -123,7 +170,32 @@ export default function Home() {
 
           <DisclaimerBanner />
 
-          <div className="mb-16">
+          {betsError && (
+            <div className="text-center mb-12">
+              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 max-w-md mx-auto">
+                <div className="text-red-400 font-medium mb-2">Unable to load betting tips</div>
+                <div className="text-red-300 text-sm">{betsError}</div>
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="mt-4 px-4 py-2 bg-red-500/20 text-red-300 rounded-lg hover:bg-red-500/30 transition-colors"
+                >
+                  Try Again
+                </button>
+              </div>
+            </div>
+          )}
+
+          {!betsError && bets.length === 0 && (
+            <div className="text-center mb-12">
+              <div className="bg-dark-100 border border-gray-700/50 rounded-xl p-8 max-w-md mx-auto glass-effect">
+                <div className="text-gray-300 font-medium mb-2">No betting tips available</div>
+                <div className="text-gray-400 text-sm">Our analysts are working on today's insights. Check back soon!</div>
+              </div>
+            </div>
+          )}
+
+          {!betsError && bets.length > 0 && (
+            <div className="mb-16">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-3xl font-bold text-white flex items-center gap-3 tracking-tight">
                 <Star className="w-8 h-8 text-accent-green animate-float" />
@@ -137,13 +209,20 @@ export default function Home() {
             </div>
             
             <div className="grid grid-cols-1 max-w-3xl mx-auto">
-              <div className="animate-slide-up">
-                <BetCard 
-                  bet={freeBet} 
-                  isLocked={user?.freeBetUsedToday}
-                  onUnlock={() => setShowSubscriptionModal(true)}
-                />
-              </div>
+              {freeBet ? (
+                <div className="animate-slide-up">
+                  <BetCard 
+                    bet={freeBet} 
+                    isLocked={user?.freeBetUsedToday}
+                    onUnlock={() => setShowSubscriptionModal(true)}
+                  />
+                </div>
+              ) : (
+                <div className="text-center p-8 bg-dark-100 border border-gray-700/50 rounded-xl glass-effect">
+                  <div className="text-gray-300 font-medium mb-2">No free tip available today</div>
+                  <div className="text-gray-400 text-sm">Check back tomorrow for your free daily analysis!</div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -154,7 +233,7 @@ export default function Home() {
                 Premium Expert Insights
               </h3>
               <div className="text-accent-purple text-sm font-medium bg-accent-purple/10 px-4 py-2 rounded-full border border-accent-purple/20">
-                {user?.hasActiveSubscription ? '5 insights available' : 'Unlock with premium'}
+                {user?.hasActiveSubscription ? `${premiumBets.length} insights available` : 'Unlock with premium'}
               </div>
             </div>
             
@@ -174,6 +253,7 @@ export default function Home() {
               ))}
             </div>
           </div>
+          )}
         </div>
 
         <BookmakerSection userLocation={user?.location} />
