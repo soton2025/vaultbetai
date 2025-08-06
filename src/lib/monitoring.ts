@@ -1,4 +1,4 @@
-import { testConnection } from './database';
+import { testConnection, DatabaseService } from './database';
 
 // Error severity levels
 const SEVERITY = {
