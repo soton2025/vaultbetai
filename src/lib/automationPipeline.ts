@@ -18,8 +18,16 @@ export class AutomationPipeline {
       const matches = await this.discoverUpcomingMatches(config.daysLookahead);
       console.log(`🏈 Found ${matches.length} upcoming matches`);
       
+      // Debug: Log detailed information about match discovery
+      console.log('🔍 Debug: Checking each league for matches...');
+      
       if (matches.length === 0) {
         console.log('⚠️ No matches found for analysis');
+        console.log('💡 This could be due to:');
+        console.log('   - No upcoming matches in the next', config.daysLookahead, 'days');
+        console.log('   - API response format issues');
+        console.log('   - Incorrect league IDs');
+        console.log('   - Date filtering being too restrictive');
         return;
       }
       
@@ -107,14 +115,21 @@ export class AutomationPipeline {
     // Get matches from each league
     for (const leagueId of leagues) {
       try {
+        console.log(`🔍 Fetching matches for league ID: ${leagueId}`);
         const leagueMatches = await SportsApiService.getUpcomingMatches(leagueId, daysLookahead);
+        console.log(`   ✅ Found ${leagueMatches.length} matches for league ${leagueId}`);
+        
+        if (leagueMatches.length > 0) {
+          console.log(`   📅 Sample match: ${leagueMatches[0].homeTeam} vs ${leagueMatches[0].awayTeam} on ${leagueMatches[0].matchDate}`);
+        }
+        
         matches.push(...leagueMatches.map(match => ({
           ...match,
           leagueId,
           priority: this.calculateMatchPriority(match, leagueId)
         })));
       } catch (error) {
-        console.warn(`Failed to fetch matches for league ${leagueId}:`, error);
+        console.error(`❌ Failed to fetch matches for league ${leagueId}:`, error);
       }
     }
     

@@ -43,13 +43,20 @@ export class SportsApiService {
         url += '?id=4328';
       }
 
+      console.log(`🌐 API URL: ${url}`);
       const response = await axios.get(url);
       await DatabaseService.logApiUsage('thesportsdb', 'eventsnextleague', 0);
       
+      console.log(`📡 API Response status: ${response.status}`);
+      console.log(`📊 API Response events count: ${response.data?.events?.length || 0}`);
+      
       if (response.data?.events) {
-        return this.transformTheSportsDbMatches(response.data.events, days);
+        const transformedMatches = this.transformTheSportsDbMatches(response.data.events, days);
+        console.log(`🔄 Transformed to ${transformedMatches.length} matches after filtering`);
+        return transformedMatches;
       }
       
+      console.log('⚠️ No events found in API response');
       return [];
     } catch (error) {
       console.error('Error fetching matches from TheSportsDB:', error);
