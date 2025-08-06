@@ -407,8 +407,8 @@ export class SchedulerService {
 
   static async stopAllJobs() {
     for (const [name, job] of this.jobs) {
-      job.destroy();
-      console.log(`🛑 Destroyed job: ${name}`);
+      job.stop();
+      console.log(`🛑 Stopped job: ${name}`);
     }
     this.jobs.clear();
     this.isInitialized = false;
