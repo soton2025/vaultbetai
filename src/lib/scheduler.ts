@@ -1,7 +1,7 @@
 import cron from 'node-cron';
 import { AutomationPipeline } from './automationPipeline';
 import { SportsApiService } from './sportsApi';
-import { DatabaseService } from './database';
+import { DatabaseService, testConnection } from './database';
 
 // Scheduling Service for Automated Tasks
 export class SchedulerService {
@@ -23,7 +23,7 @@ export class SchedulerService {
       console.log('📋 Scheduler configuration:', config);
 
       // Initialize database connection
-      await DatabaseService.testConnection();
+      await testConnection();
 
       // Schedule daily tip generation
       await this.scheduleDailyTipGeneration(config.dailyGenerationTime);
