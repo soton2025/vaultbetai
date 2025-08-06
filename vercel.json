@@ -1,8 +1,4 @@
 {
-  "env": {
-    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "@stripe_publishable_key",
-    "STRIPE_SECRET_KEY": "@stripe_secret_key"
-  },
   "headers": [
     {
       "source": "/(.*)",
