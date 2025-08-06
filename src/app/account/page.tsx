@@ -25,7 +25,7 @@ export default function AccountPage() {
       }
       
       setShowCancelConfirm(false);
-      alert('Subscription cancelled successfully. You\'ll continue to have access until the end of your billing period.');
+      alert('Subscription cancelled successfully. You&apos;ll continue to have access until the end of your billing period.');
     } catch (error) {
       console.error('Failed to cancel subscription:', error);
       alert('Failed to cancel subscription. Please contact support.');
@@ -231,7 +231,7 @@ export default function AccountPage() {
             <div className="premium-border max-w-lg w-full glass-effect-strong p-8">
               <h3 className="text-2xl font-bold text-white mb-4">Cancel Subscription?</h3>
               <p className="text-gray-300 mb-6 leading-relaxed">
-                Are you sure you want to cancel your premium subscription? You'll lose access to:
+                Are you sure you want to cancel your premium subscription? You&apos;ll lose access to:
               </p>
               <ul className="text-gray-300 mb-6 space-y-2">
                 <li>• 5 daily AI insights</li>
@@ -239,7 +239,7 @@ export default function AccountPage() {
                 <li>• Priority analysis features</li>
               </ul>
               <p className="text-sm text-gray-400 mb-6">
-                You'll continue to have access until the end of your current billing period.
+                You&apos;ll continue to have access until the end of your current billing period.
               </p>
               
               <div className="flex gap-4">

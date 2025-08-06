@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertTriangle, Info } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 export default function DisclaimerBanner() {
   return (

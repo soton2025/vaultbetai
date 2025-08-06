@@ -49,7 +49,7 @@ export default function ContactPage() {
             </div>
             <h1 className="text-3xl font-bold text-white mb-4">Message Sent!</h1>
             <p className="text-gray-300 text-lg mb-8">
-              Thank you for contacting us. We'll get back to you within 24 hours.
+              Thank you for contacting us. We&apos;ll get back to you within 24 hours.
             </p>
             <Link 
               href="/"
@@ -75,7 +75,7 @@ export default function ContactPage() {
             Contact <span className="text-premium">Support</span>
           </h1>
           <p className="text-gray-300 text-xl max-w-2xl mx-auto leading-relaxed">
-            Need help with your account, subscription, or have questions about our AI insights? We're here to help.
+            Need help with your account, subscription, or have questions about our AI insights? We&apos;re here to help.
           </p>
         </div>
 
