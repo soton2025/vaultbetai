@@ -4,10 +4,10 @@ import { DatabaseService } from '@/lib/database';
 // GET /api/bets/[id] - Fetch single betting tip with analysis
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     // Mock data for specific bet IDs (matching our current frontend)
     const mockBetsWithAnalysis: { [key: string]: any } = {
@@ -219,10 +219,10 @@ export async function GET(
 // PUT /api/bets/[id] - Update betting tip
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
 
     // TODO: Implement database update using DatabaseService
@@ -253,10 +253,10 @@ export async function PUT(
 // DELETE /api/bets/[id] - Delete betting tip
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     // TODO: Implement database deletion using DatabaseService
     // For now, return success response
