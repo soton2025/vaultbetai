@@ -260,11 +260,11 @@ export class AutomationPipeline {
   
   // Quality control for generated tips
   private static async qualityControl(tips: any[], config: any) {
-    const qualifiedTips = [];
+    const qualifiedTips: any[] = [];
     
     for (const tip of tips) {
       let passedQC = true;
-      const qcReasons = [];
+      const qcReasons: string[] = [];
       
       // Confidence threshold check
       if (tip.confidenceScore < config.minConfidenceThreshold) {
