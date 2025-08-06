@@ -1,4 +1,4 @@
-import { DatabaseService, initializeDatabase } from './database';
+import { DatabaseService, initializeDatabase, testConnection } from './database';
 import { SchedulerService } from './scheduler';
 import { MonitoringService, setupGlobalErrorHandling } from './monitoring';
 
@@ -201,7 +201,7 @@ export class StartupService {
   static async getSystemStatus() {
     try {
       const [dbConnected, healthCheck] = await Promise.all([
-        DatabaseService.testConnection(),
+        testConnection(),
         MonitoringService.performComprehensiveHealthCheck()
       ]);
       
