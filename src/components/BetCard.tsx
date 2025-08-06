@@ -79,13 +79,21 @@ export default function BetCard({ bet, isLocked = false, onUnlock }: BetCardProp
     );
   }
 
+  const handleCardClick = () => {
+    if (bet.isPremium && !isLocked) {
+      // Navigate to detailed analysis page
+      window.location.href = `/bet/${bet.id}`;
+    }
+  };
+
   return (
     <div
       className={`relative bg-gradient-to-br ${getConfidenceBg(bet.confidence)} rounded-2xl p-8 glass-effect-strong transition-all duration-500 cursor-pointer border ${getConfidenceBorder(bet.confidence)} hover:scale-105 hover:shadow-premium group ${
         isHovered ? getConfidenceGlow(bet.confidence) : ''
-      }`}
+      } ${bet.isPremium && !isLocked ? 'hover:border-accent-purple/60' : ''}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={handleCardClick}
     >
       <div className={`absolute inset-0 rounded-2xl transition-opacity duration-500 ${
         isHovered ? 'opacity-20' : 'opacity-0'
@@ -182,13 +190,23 @@ export default function BetCard({ bet, isLocked = false, onUnlock }: BetCardProp
         </div>
 
         {/* Action button */}
-        <button className="w-full btn-premium py-4 px-8 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-premium group-hover:shadow-glow-green">
-          <span className="flex items-center justify-center gap-3">
-            <TrendingUp className="w-6 h-6" />
-            View at Bookmaker
-            <span className="text-sm opacity-75">({bet.odds})</span>
-          </span>
-        </button>
+        <div className="space-y-3">
+          {bet.isPremium && (
+            <div className="text-center">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent-purple/10 rounded-full text-accent-purple text-sm font-medium border border-accent-purple/20">
+                <Zap className="w-4 h-4" />
+                Click for detailed analysis
+              </div>
+            </div>
+          )}
+          <button className="w-full btn-premium py-4 px-8 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-premium group-hover:shadow-glow-green">
+            <span className="flex items-center justify-center gap-3">
+              <TrendingUp className="w-6 h-6" />
+              View at Bookmaker
+              <span className="text-sm opacity-75">({bet.odds})</span>
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -29,7 +29,73 @@ export const mockBets: BetTip[] = [
       date: '2024-12-20 17:45'
     },
     affiliateLink: 'https://bet365.com/affiliate-link',
-    isPremium: true
+    isPremium: true,
+    analysis: {
+      headToHead: {
+        totalMeetings: 58,
+        homeWins: 22,
+        awayWins: 20,
+        draws: 16,
+        lastMeeting: {
+          date: '2024-01-31',
+          score: '4-1',
+          result: 'Liverpool win'
+        }
+      },
+      teamStats: {
+        home: {
+          recentForm: ['W', 'W', 'D', 'W', 'L'],
+          goalsScored: [3, 2, 1, 4, 0],
+          goalsConceded: [1, 2, 1, 2, 3],
+          homeRecord: { wins: 8, draws: 2, losses: 1 }
+        },
+        away: {
+          recentForm: ['W', 'W', 'W', 'D', 'W'],
+          goalsScored: [2, 3, 1, 2, 2],
+          goalsConceded: [1, 1, 0, 2, 1],
+          awayRecord: { wins: 7, draws: 3, losses: 2 }
+        }
+      },
+      keyPlayers: {
+        home: [
+          { name: 'Mohamed Salah', position: 'RW', status: 'available', importance: 'key' },
+          { name: 'Virgil van Dijk', position: 'CB', status: 'available', importance: 'key' },
+          { name: 'Darwin Núñez', position: 'ST', status: 'doubtful', importance: 'important' }
+        ],
+        away: [
+          { name: 'Cole Palmer', position: 'AM', status: 'available', importance: 'key' },
+          { name: 'Nicolas Jackson', position: 'ST', status: 'available', importance: 'key' },
+          { name: 'Reece James', position: 'RB', status: 'injured', importance: 'important' }
+        ]
+      },
+      venue: {
+        name: 'Anfield',
+        capacity: 53394,
+        homeAdvantage: 78
+      },
+      weather: {
+        conditions: 'Clear skies',
+        temperature: 8,
+        impact: 'neutral'
+      },
+      marketTrends: {
+        openingOdds: 1.95,
+        currentOdds: 1.85,
+        movement: 'backing',
+        volume: 'high'
+      },
+      riskFactors: [
+        'Liverpool\'s defensive frailties at set pieces',
+        'Chelsea\'s inconsistent away form against top 6',
+        'Potential rotation due to fixture congestion',
+        'Weather conditions may favor defensive play'
+      ],
+      valueAnalysis: {
+        impliedProbability: 54.1,
+        modelProbability: 61.3,
+        valueRating: 8
+      }
+    }
   },
   {
     id: '3',
@@ -44,7 +110,73 @@ export const mockBets: BetTip[] = [
       date: '2024-12-21 20:00'
     },
     affiliateLink: 'https://bet365.com/affiliate-link',
-    isPremium: true
+    isPremium: true,
+    analysis: {
+      headToHead: {
+        totalMeetings: 253,
+        homeWins: 97,
+        awayWins: 103,
+        draws: 53,
+        lastMeeting: {
+          date: '2024-10-26',
+          score: '2-1',
+          result: 'Barcelona win'
+        }
+      },
+      teamStats: {
+        home: {
+          recentForm: ['W', 'W', 'W', 'D', 'W'],
+          goalsScored: [3, 2, 4, 1, 2],
+          goalsConceded: [0, 1, 1, 1, 0],
+          homeRecord: { wins: 9, draws: 2, losses: 0 }
+        },
+        away: {
+          recentForm: ['W', 'L', 'W', 'W', 'D'],
+          goalsScored: [2, 0, 3, 2, 1],
+          goalsConceded: [1, 4, 1, 0, 1],
+          awayRecord: { wins: 6, draws: 3, losses: 3 }
+        }
+      },
+      keyPlayers: {
+        home: [
+          { name: 'Robert Lewandowski', position: 'ST', status: 'available', importance: 'key' },
+          { name: 'Pedri', position: 'CM', status: 'available', importance: 'key' },
+          { name: 'Gavi', position: 'CM', status: 'available', importance: 'important' }
+        ],
+        away: [
+          { name: 'Kylian Mbappé', position: 'LW', status: 'available', importance: 'key' },
+          { name: 'Vinícius Jr.', position: 'LW', status: 'doubtful', importance: 'key' },
+          { name: 'Jude Bellingham', position: 'CM', status: 'injured', importance: 'key' }
+        ]
+      },
+      venue: {
+        name: 'Camp Nou',
+        capacity: 99354,
+        homeAdvantage: 82
+      },
+      weather: {
+        conditions: 'Partly cloudy',
+        temperature: 16,
+        impact: 'positive'
+      },
+      marketTrends: {
+        openingOdds: 2.10,
+        currentOdds: 1.95,
+        movement: 'backing',
+        volume: 'high'
+      },
+      riskFactors: [
+        'El Clasico unpredictability factor',
+        'Real Madrid\'s big game experience',
+        'Potential referee pressure in high-profile match',
+        'Barcelona\'s European fixture fatigue'
+      ],
+      valueAnalysis: {
+        impliedProbability: 51.3,
+        modelProbability: 58.7,
+        valueRating: 7
+      }
+    }
   },
   {
     id: '4',
