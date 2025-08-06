@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Type assertion to access subscription properties
-    const subscriptionData = subscription as any;
+    const subscriptionData = subscription as Stripe.Subscription;
     
     return NextResponse.json({
       success: true,
