@@ -52,6 +52,13 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    if (!subscription) {
+      return NextResponse.json(
+        { error: 'No subscription found to cancel' },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json({
       success: true,
       subscription: {
