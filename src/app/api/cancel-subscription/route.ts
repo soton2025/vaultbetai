@@ -58,14 +58,17 @@ export async function POST(req: NextRequest) {
         { status: 404 }
       );
     }
+
+    // Fetch the complete subscription data to ensure all properties are available
+    const completeSubscription = await stripe.subscriptions.retrieve(subscription.id);
     
     return NextResponse.json({
       success: true,
       subscription: {
-        id: subscription!.id,
-        status: subscription!.status,
-        cancel_at_period_end: subscription!.cancel_at_period_end,
-        current_period_end: (subscription! as Stripe.Subscription).current_period_end,
+        id: completeSubscription.id,
+        status: completeSubscription.status,
+        cancel_at_period_end: completeSubscription.cancel_at_period_end,
+        current_period_end: (completeSubscription as any).current_period_end,
       },
       message: 'Subscription will be cancelled at the end of the current billing period.',
     });
@@ -117,9 +120,9 @@ export async function GET(req: NextRequest) {
         id: sub.id,
         status: sub.status,
         cancel_at_period_end: sub.cancel_at_period_end,
-        current_period_start: sub.current_period_start,
-        current_period_end: sub.current_period_end,
-        cancelled_at: sub.cancelled_at,
+        current_period_start: (sub as any).current_period_start,
+        current_period_end: (sub as any).current_period_end,
+        cancelled_at: (sub as any).cancelled_at,
       })) || [],
     });
 
