@@ -133,15 +133,115 @@ export class AnalyticsPresentation {
 
   private static formatOutcomeDescription(outcome: string): string {
     const descriptions: Record<string, string> = {
-      'home_win': 'Home Team Victory',
-      'away_win': 'Away Team Victory', 
-      'draw': 'Draw Result',
+      // Match Result
+      'home_win': 'Home Win',
+      'away_win': 'Away Win', 
+      'draw': 'Draw',
+      
+      // Goals Markets
       'over_2_5_goals': 'Over 2.5 Goals',
       'under_2_5_goals': 'Under 2.5 Goals',
+      'over_1_5_goals': 'Over 1.5 Goals',
+      'under_1_5_goals': 'Under 1.5 Goals',
+      'over_3_5_goals': 'Over 3.5 Goals',
+      'under_3_5_goals': 'Under 3.5 Goals',
+      'over_0_5_goals': 'Over 0.5 Goals',
+      'under_0_5_goals': 'Under 0.5 Goals',
+      
+      // Both Teams to Score
       'btts': 'Both Teams to Score',
-      'btts_no': 'Both Teams Not to Score'
+      'btts_no': 'Both Teams Not to Score',
+      'btts_yes': 'Both Teams to Score',
+      
+      // Handicap Markets (clean up handicap formatting)
+      'arsenal_handicap_minus_1': 'Arsenal -1 Handicap',
+      'home_handicap_minus_1': 'Home Team -1 Handicap',
+      'away_handicap_plus_1': 'Away Team +1 Handicap',
+      'home_handicap_minus_0_5': 'Home Team -0.5 Handicap',
+      'away_handicap_plus_0_5': 'Away Team +0.5 Handicap',
+      
+      // Double Chance
+      'home_or_draw': 'Home Win or Draw',
+      'away_or_draw': 'Away Win or Draw',
+      'home_or_away': 'Home Win or Away Win',
+      
+      // Clean Sheet
+      'home_clean_sheet': 'Home Team Clean Sheet',
+      'away_clean_sheet': 'Away Team Clean Sheet',
+      
+      // First Goal
+      'home_first_goal': 'Home Team First Goal',
+      'away_first_goal': 'Away Team First Goal',
+      
+      // Win to Nil
+      'home_win_to_nil': 'Home Win to Nil',
+      'away_win_to_nil': 'Away Win to Nil'
     };
-    return descriptions[outcome] || 'Alternative Market Opportunity';
+    
+    // Handle dynamic handicap formatting for any team
+    if (outcome.includes('handicap')) {
+      return this.formatHandicapDescription(outcome);
+    }
+    
+    // Handle dynamic over/under goals
+    if (outcome.includes('over_') || outcome.includes('under_')) {
+      return this.formatGoalsDescription(outcome);
+    }
+    
+    return descriptions[outcome] || this.formatGenericDescription(outcome);
+  }
+
+  // Helper function to format handicap descriptions dynamically
+  private static formatHandicapDescription(outcome: string): string {
+    // Extract team name and handicap value
+    const parts = outcome.split('_');
+    if (parts.length < 3) return outcome.replace(/_/g, ' ');
+    
+    const teamIndex = parts.findIndex(p => p === 'handicap');
+    if (teamIndex === -1) return outcome.replace(/_/g, ' ');
+    
+    const teamPart = parts.slice(0, teamIndex).join(' ');
+    const handicapParts = parts.slice(teamIndex + 1);
+    
+    // Format team name
+    const teamName = teamPart.split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+    
+    // Format handicap value
+    let handicapValue = '';
+    if (handicapParts.includes('minus')) {
+      const valueIndex = handicapParts.indexOf('minus') + 1;
+      const value = handicapParts[valueIndex] || '0';
+      handicapValue = `-${value.replace('_', '.')}`;
+    } else if (handicapParts.includes('plus')) {
+      const valueIndex = handicapParts.indexOf('plus') + 1;
+      const value = handicapParts[valueIndex] || '0';
+      handicapValue = `+${value.replace('_', '.')}`;
+    }
+    
+    return `${teamName} ${handicapValue} Handicap`;
+  }
+
+  // Helper function to format goals descriptions dynamically  
+  private static formatGoalsDescription(outcome: string): string {
+    if (outcome.startsWith('over_')) {
+      const goalValue = outcome.replace('over_', '').replace('_', '.');
+      return `Over ${goalValue} Goals`;
+    } else if (outcome.startsWith('under_')) {
+      const goalValue = outcome.replace('under_', '').replace('_', '.');
+      return `Under ${goalValue} Goals`;
+    }
+    return outcome.replace(/_/g, ' ');
+  }
+
+  // Helper function for generic description formatting
+  private static formatGenericDescription(outcome: string): string {
+    // Convert underscores to spaces and capitalize each word
+    return outcome
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 
   private static formatResearchBasis(factors: string[]): string {

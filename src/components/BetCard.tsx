@@ -20,15 +20,99 @@ export default function BetCard({ bet, isLocked = false, onUnlock }: BetCardProp
 
   const getBetTypeDisplay = (type: string) => {
     const types = {
-      'over_2_5_goals': 'Over 2.5 Goals',
-      'under_2_5_goals': 'Under 2.5 Goals',
-      'match_result': 'Match Result',
-      'btts': 'Both Teams to Score',
+      // Match Result
       'home_win': 'Home Win',
       'away_win': 'Away Win',
-      'draw': 'Draw'
+      'draw': 'Draw',
+      'match_result': 'Match Result',
+      
+      // Goals Markets
+      'over_2_5_goals': 'Over 2.5 Goals',
+      'under_2_5_goals': 'Under 2.5 Goals',
+      'over_1_5_goals': 'Over 1.5 Goals',
+      'under_1_5_goals': 'Under 1.5 Goals',
+      'over_3_5_goals': 'Over 3.5 Goals',
+      'under_3_5_goals': 'Under 3.5 Goals',
+      'over_0_5_goals': 'Over 0.5 Goals',
+      'under_0_5_goals': 'Under 0.5 Goals',
+      
+      // Both Teams to Score
+      'btts': 'Both Teams to Score',
+      'btts_yes': 'Both Teams to Score',
+      'btts_no': 'Both Teams Not to Score',
+      
+      // Double Chance
+      'home_or_draw': 'Home Win or Draw',
+      'away_or_draw': 'Away Win or Draw',
+      'home_or_away': 'Home Win or Away Win',
+      
+      // Clean Sheet
+      'home_clean_sheet': 'Home Team Clean Sheet',
+      'away_clean_sheet': 'Away Team Clean Sheet'
     };
-    return types[type as keyof typeof types] || type;
+    
+    // Handle dynamic handicap formatting
+    if (type.includes('handicap')) {
+      return formatHandicapDisplay(type);
+    }
+    
+    // Handle dynamic over/under goals that aren't in the static list
+    if (type.includes('over_') || type.includes('under_')) {
+      return formatGoalsDisplay(type);
+    }
+    
+    // Return mapped type or format generically
+    return types[type as keyof typeof types] || formatGenericDisplay(type);
+  };
+
+  const formatHandicapDisplay = (type: string) => {
+    // Extract team name and handicap value  
+    const parts = type.split('_');
+    if (parts.length < 3) return type.replace(/_/g, ' ');
+    
+    const teamIndex = parts.findIndex(p => p === 'handicap');
+    if (teamIndex === -1) return type.replace(/_/g, ' ');
+    
+    const teamPart = parts.slice(0, teamIndex).join(' ');
+    const handicapParts = parts.slice(teamIndex + 1);
+    
+    // Format team name
+    const teamName = teamPart.split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+    
+    // Format handicap value
+    let handicapValue = '';
+    if (handicapParts.includes('minus')) {
+      const valueIndex = handicapParts.indexOf('minus') + 1;
+      const value = handicapParts[valueIndex] || '0';
+      handicapValue = `-${value.replace('_', '.')}`;
+    } else if (handicapParts.includes('plus')) {
+      const valueIndex = handicapParts.indexOf('plus') + 1;
+      const value = handicapParts[valueIndex] || '0';
+      handicapValue = `+${value.replace('_', '.')}`;
+    }
+    
+    return `${teamName} ${handicapValue} Handicap`;
+  };
+
+  const formatGoalsDisplay = (type: string) => {
+    if (type.startsWith('over_')) {
+      const goalValue = type.replace('over_', '').replace('_', '.');
+      return `Over ${goalValue} Goals`;
+    } else if (type.startsWith('under_')) {
+      const goalValue = type.replace('under_', '').replace('_', '.');
+      return `Under ${goalValue} Goals`;
+    }
+    return type.replace(/_/g, ' ');
+  };
+
+  const formatGenericDisplay = (type: string) => {
+    // Convert underscores to spaces and capitalize each word
+    return type
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   };
 
   const getConfidenceColor = (confidence: number) => {
