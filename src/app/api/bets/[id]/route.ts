@@ -164,12 +164,6 @@ export async function GET(
             temperature: 16,
             impact: 'positive'
           },
-          marketTrends: {
-            openingOdds: 2.10,
-            currentOdds: 1.95,
-            movement: 'backing',
-            volume: 'high'
-          },
           riskFactors: [
             'El Clasico unpredictability factor',
             'Real Madrid\'s big game experience',
@@ -179,7 +173,80 @@ export async function GET(
           valueAnalysis: {
             impliedProbability: 51.3,
             modelProbability: 58.7,
-            valueRating: 7
+            valueRating: 7.8
+          }
+        }
+      },
+      'premium-3': {
+        id: 'premium-3',
+        bet_type: 'under_2_5_goals',
+        recommended_odds: 2.05,
+        confidence_score: 84,
+        explanation: 'Statistical modeling indicates strong defensive patterns. Both teams have evolved into defensively-solid units with low-scoring recent encounters, creating significant value in the under market.',
+        is_premium: true,
+        published_at: new Date().toISOString(),
+        match_date: new Date(Date.now() + 27 * 60 * 60 * 1000).toISOString(),
+        home_team: 'Atletico Madrid',
+        away_team: 'Sevilla',
+        league: 'La Liga',
+        analysis: {
+          headToHead: {
+            totalMeetings: 64,
+            homeWins: 28,
+            awayWins: 18,
+            draws: 18,
+            lastMeeting: {
+              date: '2024-03-17',
+              score: '1-0',
+              result: 'Atletico win'
+            }
+          },
+          teamStats: {
+            home: {
+              recentForm: ['W', 'D', 'W', 'D', 'W'],
+              goalsScored: [1, 0, 2, 1, 1],
+              goalsConceded: [0, 0, 1, 1, 0],
+              homeRecord: { wins: 7, draws: 4, losses: 1 }
+            },
+            away: {
+              recentForm: ['D', 'L', 'W', 'D', 'D'],
+              goalsScored: [1, 0, 2, 0, 1],
+              goalsConceded: [1, 2, 1, 0, 1],
+              awayRecord: { wins: 4, draws: 5, losses: 3 }
+            }
+          },
+          keyPlayers: {
+            home: [
+              { name: 'Jan Oblak', position: 'GK', status: 'available', importance: 'key' },
+              { name: 'José María Giménez', position: 'CB', status: 'available', importance: 'key' },
+              { name: 'Antoine Griezmann', position: 'CF', status: 'available', importance: 'important' }
+            ],
+            away: [
+              { name: 'Yassine Bono', position: 'GK', status: 'available', importance: 'key' },
+              { name: 'Sergio Ramos', position: 'CB', status: 'doubtful', importance: 'key' },
+              { name: 'Youssef En-Nesyri', position: 'ST', status: 'available', importance: 'important' }
+            ]
+          },
+          venue: {
+            name: 'Wanda Metropolitano',
+            capacity: 68456,
+            homeAdvantage: 75
+          },
+          weather: {
+            conditions: 'Clear',
+            temperature: 12,
+            impact: 'neutral'
+          },
+          riskFactors: [
+            'Atletico\'s occasional high-scoring home games',
+            'Sevilla\'s inconsistent away attacking form',
+            'Potential for late goals in tight matches',
+            'Historical low-scoring pattern may change'
+          ],
+          valueAnalysis: {
+            impliedProbability: 48.8,
+            modelProbability: 56.2,
+            valueRating: 8.4
           }
         }
       }

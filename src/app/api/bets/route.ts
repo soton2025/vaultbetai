@@ -92,6 +92,22 @@ export async function GET(request: NextRequest) {
           value_rating: 7.8,
           implied_probability: 51.3,
           model_probability: 58.7
+        },
+        {
+          id: 'premium-3', 
+          bet_type: 'under_2_5_goals',
+          recommended_odds: 2.05,
+          confidence_score: 84,
+          explanation: 'Advanced defensive metrics analysis reveals significant market mispricing. Both teams show strong defensive patterns with recent low-scoring encounters creating exceptional value opportunity.',
+          is_premium: true,
+          published_at: new Date().toISOString(),
+          match_date: new Date(Date.now() + 27 * 60 * 60 * 1000).toISOString(),
+          home_team: 'Atletico Madrid', 
+          away_team: 'Sevilla',
+          league: 'La Liga',
+          value_rating: 8.4,
+          implied_probability: 48.8,
+          model_probability: 56.2
         }
       ];
 
