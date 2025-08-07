@@ -484,13 +484,13 @@ export class AutomationPipeline {
       }
       
       // Ensure league exists
-      let leagueId = await this.ensureLeagueInDatabase(match.league, match.leagueId);
+      const leagueId = await this.ensureLeagueInDatabase(match.league, match.leagueId);
       
       // Ensure home team exists
-      let homeTeamId = await this.ensureTeamInDatabase(match.homeTeam, leagueId);
+      const homeTeamId = await this.ensureTeamInDatabase(match.homeTeam, leagueId);
       
       // Ensure away team exists  
-      let awayTeamId = await this.ensureTeamInDatabase(match.awayTeam, leagueId);
+      const awayTeamId = await this.ensureTeamInDatabase(match.awayTeam, leagueId);
       
       // Create match with proper foreign key references
       const result = await DatabaseService.query(`

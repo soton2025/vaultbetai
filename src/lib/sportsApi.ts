@@ -96,7 +96,7 @@ export class SportsApiService {
           // Rate limiting between competitions
           await new Promise(resolve => setTimeout(resolve, 1000));
           
-        } catch (error) {
+        } catch (error: any) {
           console.error(`❌ Error fetching ${competitionCode}:`, error.response?.status || error.message);
         }
       }
