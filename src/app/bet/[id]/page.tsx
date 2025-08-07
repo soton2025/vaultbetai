@@ -21,9 +21,10 @@ import {
   Lock
 } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
-import { mockBets } from '@/data/mockBets';
 import { BetTip } from '@/types';
 import SubscriptionModal from '@/components/SubscriptionModal';
+import ValueChart from '@/components/ValueChart';
+import PerformanceMetrics from '@/components/PerformanceMetrics';
 import { stripePromise } from '@/lib/stripe';
 
 export default function BetAnalysisPage() {
@@ -34,10 +35,28 @@ export default function BetAnalysisPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Find bet by ID
-    const foundBet = mockBets.find(b => b.id === id);
-    setBet(foundBet || null);
-    setLoading(false);
+    const fetchBet = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/bets/${id}`);
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          setBet(data.data);
+        } else {
+          setBet(null);
+        }
+      } catch (error) {
+        console.error('Error fetching bet:', error);
+        setBet(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchBet();
+    }
   }, [id]);
 
   const handleSubscribe = async () => {
@@ -107,9 +126,9 @@ export default function BetAnalysisPage() {
               <div className="absolute inset-0 w-20 h-20 border-2 border-accent-purple/30 rounded-full animate-ping mx-auto" />
             </div>
             
-            <h1 className="text-4xl font-bold text-accent-purple mb-4">Premium Analysis</h1>
+            <h1 className="text-4xl font-bold text-accent-purple mb-4">Institutional Research</h1>
             <p className="text-gray-300 text-lg mb-8">
-              This detailed analysis is available to premium subscribers only.
+              This detailed quantitative analysis is available to research platform subscribers only.
             </p>
             
             <div className="mb-8">
@@ -130,7 +149,7 @@ export default function BetAnalysisPage() {
             >
               <span className="flex items-center justify-center gap-2">
                 <Crown className="w-5 h-5" />
-                Upgrade to Premium
+                Access Research Platform
               </span>
             </button>
           </div>
@@ -235,21 +254,16 @@ export default function BetAnalysisPage() {
               <div className="bg-gradient-to-br from-dark-100 to-dark-200 rounded-2xl p-6 glass-effect-strong border border-gray-700/50">
                 <div className="flex items-center gap-2 mb-4">
                   <Shield className="w-5 h-5 text-accent-purple" />
-                  <h2 className="text-xl font-bold text-white">Expert Analysis</h2>
+                  <h2 className="text-xl font-bold text-white">Quantitative Model Output</h2>
                 </div>
-                <p className="text-gray-300 leading-relaxed mb-4">{bet.explanation}</p>
-                <div className="bg-dark-300/50 rounded-xl p-4">
-                  <div className="text-sm text-gray-400 mb-2">Value Rating</div>
-                  <div className="flex items-center gap-4">
-                    <div className="flex-1 bg-dark-400 rounded-full h-3">
-                      <div 
-                        className="h-full bg-gradient-to-r from-accent-green to-accent-cyan rounded-full transition-all duration-1000"
-                        style={{ width: `${bet.analysis.valueAnalysis.valueRating * 10}%` }}
-                      />
-                    </div>
-                    <span className="text-accent-green font-bold">{bet.analysis.valueAnalysis.valueRating}/10</span>
-                  </div>
-                </div>
+                <p className="text-gray-300 leading-relaxed mb-6">{bet.explanation}</p>
+                
+                {/* Value Chart */}
+                <ValueChart
+                  valueRating={bet.analysis.valueAnalysis.valueRating}
+                  impliedProbability={bet.analysis.valueAnalysis.impliedProbability}
+                  modelProbability={bet.analysis.valueAnalysis.modelProbability}
+                />
               </div>
 
               {/* Head to Head */}
@@ -408,12 +422,12 @@ export default function BetAnalysisPage() {
                 <button className="w-full btn-premium py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105">
                   <span className="flex items-center justify-center gap-3">
                     <TrendingUp className="w-6 h-6" />
-                    View at Bookmaker
+                    View Market Data
                     <span className="text-sm opacity-75">({bet.odds})</span>
                   </span>
                 </button>
                 <div className="text-xs text-gray-400 text-center mt-3">
-                  *Educational analysis only. Not professional betting advice.
+                  *Educational research only. Not professional investment advice.
                 </div>
               </div>
             </div>
@@ -423,12 +437,12 @@ export default function BetAnalysisPage() {
           <div className="bg-gradient-to-br from-dark-100 to-dark-200 rounded-2xl p-8 glass-effect-strong border border-gray-700/50">
             <div className="text-center">
               <div className="text-6xl mb-6">🔍</div>
-              <h2 className="text-2xl font-bold text-white mb-4">Basic Analysis</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">Sample Research</h2>
               <p className="text-gray-300 leading-relaxed mb-8">{bet.explanation}</p>
               <button className="btn-premium py-4 px-8 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105">
                 <span className="flex items-center justify-center gap-3">
                   <TrendingUp className="w-6 h-6" />
-                  View at Bookmaker
+                  View Market Data
                   <span className="text-sm opacity-75">({bet.odds})</span>
                 </span>
               </button>

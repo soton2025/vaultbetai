@@ -9,17 +9,31 @@ export async function GET(
   try {
     const { id } = await params;
 
-    // Mock data for specific bet IDs (matching our current frontend)
+    // Sample data for specific bet IDs (matching our API response)
     const mockBetsWithAnalysis: { [key: string]: any } = {
-      '2': {
-        id: '2',
+      'free-1': {
+        id: 'free-1',
+        bet_type: 'over_2_5_goals',
+        recommended_odds: 2.15,
+        confidence_score: 87,
+        explanation: 'Advanced statistical modeling indicates both teams have exceptional scoring patterns. Manchester City averages 2.8 goals per game at home this season, while Arsenal has scored in 9 of their last 10 away fixtures. Quantitative models show significant edge in this market.',
+        is_premium: false,
+        published_at: new Date().toISOString(),
+        match_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        home_team: 'Manchester City',
+        away_team: 'Arsenal',
+        league: 'Premier League',
+        analysis: null // Free bet has no detailed analysis
+      },
+      'premium-1': {
+        id: 'premium-1',
         bet_type: 'btts',
         recommended_odds: 1.85,
         confidence_score: 92,
-        explanation: 'Liverpool and Chelsea both have leaky defenses but potent attacks. Liverpool has conceded in 7 of their last 8 home games, while Chelsea has scored in every away match this season.',
+        explanation: 'Institutional-grade algorithmic analysis identifies significant market inefficiency. Advanced defensive metrics combined with offensive efficiency models predict high scoring probability across both teams.',
         is_premium: true,
-        published_at: '2024-12-20T17:45:00Z',
-        match_date: '2024-12-20T17:45:00Z',
+        published_at: new Date().toISOString(),
+        match_date: new Date(Date.now() + 25 * 60 * 60 * 1000).toISOString(),
         home_team: 'Liverpool',
         away_team: 'Chelsea',
         league: 'Premier League',
@@ -90,15 +104,15 @@ export async function GET(
           }
         }
       },
-      '3': {
-        id: '3',
+      'premium-2': {
+        id: 'premium-2',
         bet_type: 'home_win',
         recommended_odds: 1.95,
         confidence_score: 78,
-        explanation: 'Barcelona has been dominant at Camp Nou with 8 wins in their last 10 home matches. Real Madrid is missing 3 key players due to injury and has struggled in recent away fixtures.',
+        explanation: 'Proprietary quantitative models identify substantial market inefficiency. Barcelona\'s home dominance metrics combined with Real Madrid\'s injury concerns create compelling value backed by advanced statistical analysis.',
         is_premium: true,
-        published_at: '2024-12-21T20:00:00Z',
-        match_date: '2024-12-21T20:00:00Z',
+        published_at: new Date().toISOString(),
+        match_date: new Date(Date.now() + 26 * 60 * 60 * 1000).toISOString(),
         home_team: 'Barcelona',
         away_team: 'Real Madrid',
         league: 'La Liga',

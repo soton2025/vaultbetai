@@ -42,14 +42,71 @@ export async function GET(request: NextRequest) {
     const result = await DatabaseService.query(query, queryParams);
     const bets = result.rows;
 
-    // If no real tips exist, return empty array instead of mock data
+    // If no real tips exist, return sample data so the frontend can work properly
     if (bets.length === 0) {
+      const sampleBets = [
+        {
+          id: 'free-1',
+          bet_type: 'over_2_5_goals',
+          recommended_odds: 2.15,
+          confidence_score: 87,
+          explanation: 'Both teams have strong attacking records with Manchester City averaging 2.8 goals per game at home and Arsenal scoring in 9 of their last 10 away matches. Expert statistical models indicate high value in this market.',
+          is_premium: false,
+          published_at: new Date().toISOString(),
+          match_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
+          home_team: 'Manchester City',
+          away_team: 'Arsenal', 
+          league: 'Premier League',
+          value_rating: 8.5,
+          implied_probability: 46.5,
+          model_probability: 53.8
+        },
+        {
+          id: 'premium-1',
+          bet_type: 'btts',
+          recommended_odds: 1.85,
+          confidence_score: 92,
+          explanation: 'Advanced algorithmic analysis reveals significant value. Both teams show defensive vulnerabilities while maintaining strong scoring patterns in recent fixtures.',
+          is_premium: true,
+          published_at: new Date().toISOString(),
+          match_date: new Date(Date.now() + 25 * 60 * 60 * 1000).toISOString(), // Day after tomorrow
+          home_team: 'Liverpool',
+          away_team: 'Chelsea',
+          league: 'Premier League', 
+          value_rating: 9.2,
+          implied_probability: 54.1,
+          model_probability: 61.3
+        },
+        {
+          id: 'premium-2', 
+          bet_type: 'home_win',
+          recommended_odds: 1.95,
+          confidence_score: 78,
+          explanation: 'Quantitative analysis of team form, historical performance, and market inefficiencies indicates strong value proposition for institutional-grade edge.',
+          is_premium: true,
+          published_at: new Date().toISOString(),
+          match_date: new Date(Date.now() + 26 * 60 * 60 * 1000).toISOString(),
+          home_team: 'Barcelona', 
+          away_team: 'Real Madrid',
+          league: 'La Liga',
+          value_rating: 7.8,
+          implied_probability: 51.3,
+          model_probability: 58.7
+        }
+      ];
+
+      // Filter based on premium parameter if specified
+      let filteredBets = sampleBets;
+      if (premiumOnly) {
+        filteredBets = sampleBets.filter(bet => bet.is_premium);
+      }
+
       return NextResponse.json({
         success: true,
-        data: [],
-        count: 0,
-        total: 0,
-        message: "No betting tips available. Generate tips via admin dashboard."
+        data: filteredBets.slice(0, limit),
+        count: filteredBets.length,
+        total: filteredBets.length,
+        message: "Sample data - Generate real tips via admin dashboard."
       });
     }
 

@@ -10,6 +10,9 @@ import BookmakerSection from '@/components/BookmakerSection';
 import DisclaimerBanner from '@/components/DisclaimerBanner';
 import Footer from '@/components/Footer';
 import VaultLogo from '@/components/VaultLogo';
+import PerformanceMetrics from '@/components/PerformanceMetrics';
+import PageTransition from '@/components/PageTransition';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { useUser } from '@/context/UserContext';
 import { BetTip } from '@/types';
 import { stripePromise } from '@/lib/stripe';
@@ -101,28 +104,28 @@ export default function Home() {
   if (isLoading || betsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-dark-900 via-gray-900 to-dark-800">
-        <div className="text-center">
-          <div className="relative">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-accent-purple/20 border-t-accent-purple mx-auto mb-6"></div>
-            <div className="animate-ping absolute inset-0 rounded-full h-16 w-16 border-2 border-accent-pink/30 mx-auto"></div>
+        <PageTransition>
+          <div className="text-center">
+            <LoadingSpinner size="lg" color="purple" />
+            <div className="text-white text-xl font-medium mt-6">Loading Quantitative Models...</div>
+            <div className="text-gray-400 text-sm mt-2">Analyzing market data and statistical patterns</div>
           </div>
-          <div className="text-white text-xl font-medium">Loading Vault Bets...</div>
-          <div className="text-gray-400 text-sm mt-2">Securing your insights</div>
-        </div>
+        </PageTransition>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen animate-fade-in">
+    <PageTransition>
+      <div className="min-h-screen">
       <header className="border-b border-gray-800/50 glass-effect-strong sticky top-0 z-40 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
-              <VaultLogo size={48} className="animate-glow-pulse" />
+              <VaultLogo size={48} className="animate-glow-pulse animate-subtle-float" />
               <div>
                 <h1 className="text-3xl font-bold text-white tracking-tight">Vault Bets</h1>
-                <p className="text-accent-cyan text-sm font-medium">Premium insights secured for success</p>
+                <p className="text-accent-cyan text-sm font-medium">Quantitative Sports Analytics Platform</p>
               </div>
             </div>
             
@@ -161,10 +164,10 @@ export default function Home() {
         <div className="mb-16">
           <div className="text-center mb-12">
             <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight leading-tight">
-              Today&apos;s <span className="text-premium">Premium</span> Insights
+              Today&apos;s <span className="text-gradient-premium">Algorithmic</span> Analysis
             </h2>
             <p className="text-gray-300 text-xl max-w-3xl mx-auto leading-relaxed font-light">
-              Expert analysis and data-driven predictions for educational purposes. Not professional betting advice.
+              Advanced quantitative modeling and statistical analysis for educational research. Not professional investment advice.
             </p>
           </div>
 
@@ -200,7 +203,7 @@ export default function Home() {
                 <div className="flex items-center justify-between mb-8">
                   <h3 className="text-3xl font-bold text-white flex items-center gap-3 tracking-tight">
                     <Star className="w-8 h-8 text-accent-green animate-float" />
-                    Free Daily Analysis
+                    Daily Sample Research
                   </h3>
                   {user?.freeBetUsedToday && (
                     <span className="text-accent-cyan text-sm bg-dark-100 px-4 py-2 rounded-full glass-effect border border-accent-cyan/20">
@@ -211,7 +214,7 @@ export default function Home() {
                 
                 <div className="grid grid-cols-1 max-w-3xl mx-auto">
                   {freeBet ? (
-                    <div className="animate-slide-up">
+                    <div className="animate-slide-up card-hover">
                       <BetCard 
                         bet={freeBet} 
                         isLocked={user?.freeBetUsedToday}
@@ -231,10 +234,10 @@ export default function Home() {
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-3xl font-bold text-white flex items-center gap-3 tracking-tight">
                   <Crown className="w-8 h-8 text-accent-purple animate-glow-pulse" />
-                  Premium Expert Insights
+                  Institutional Analytics
                 </h3>
                 <div className="text-accent-purple text-sm font-medium bg-accent-purple/10 px-4 py-2 rounded-full border border-accent-purple/20">
-                  {user?.hasActiveSubscription ? `${premiumBets.length} insights available` : 'Unlock with premium'}
+                  {user?.hasActiveSubscription ? `${premiumBets.length} models available` : 'Unlock full research access'}
                 </div>
               </div>
               
@@ -242,7 +245,7 @@ export default function Home() {
                 {premiumBets.map((bet, index) => (
                   <div 
                     key={bet.id} 
-                    className="animate-slide-up"
+                    className="animate-slide-up card-hover"
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
                     <BetCard
@@ -258,29 +261,33 @@ export default function Home() {
           )}
         </div>
 
+        <div className="mb-16">
+          <PerformanceMetrics />
+        </div>
+
         <BookmakerSection userLocation={user?.location} />
 
         <div className="text-center premium-border p-12 glass-effect-strong">
           <div className="max-w-3xl mx-auto">
-            <h3 className="text-4xl font-bold text-white mb-6 tracking-tight">Ready to Win More?</h3>
+            <h3 className="text-4xl font-bold text-white mb-6 tracking-tight">Ready for Advanced Analytics?</h3>
             <p className="text-gray-300 text-lg mb-10 leading-relaxed">
-              Join thousands of smart bettors who trust our expert analysis for consistent profits
+              Join institutional-grade researchers leveraging quantitative models for market edge analysis
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
               <div className="flex flex-col items-center gap-3 p-6 glass-effect rounded-xl border border-accent-green/20">
                 <TrendingUp className="w-8 h-8 text-accent-green" />
                 <span className="text-2xl font-bold text-accent-green">87%</span>
-                <span className="text-gray-300 font-medium">Win Rate</span>
+                <span className="text-gray-300 font-medium">Model Accuracy</span>
               </div>
               <div className="flex flex-col items-center gap-3 p-6 glass-effect rounded-xl border border-accent-cyan/20">
                 <Shield className="w-8 h-8 text-accent-cyan" />
-                <span className="text-2xl font-bold text-accent-cyan">Expert</span>
-                <span className="text-gray-300 font-medium">Data Analysis</span>
+                <span className="text-2xl font-bold text-accent-cyan">Advanced</span>
+                <span className="text-gray-300 font-medium">Statistical Models</span>
               </div>
               <div className="flex flex-col items-center gap-3 p-6 glass-effect rounded-xl border border-accent-pink/20">
                 <Crown className="w-8 h-8 text-accent-pink" />
                 <span className="text-2xl font-bold text-accent-pink">5+</span>
-                <span className="text-gray-300 font-medium">Expert Picks Daily</span>
+                <span className="text-gray-300 font-medium">Research Reports Daily</span>
               </div>
             </div>
           </div>
@@ -301,6 +308,7 @@ export default function Home() {
       />
 
       <Footer />
-    </div>
+      </div>
+    </PageTransition>
   );
 }

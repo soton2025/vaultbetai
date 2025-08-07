@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import LoadingSpinner from './LoadingSpinner';
+import Tooltip from './Tooltip';
 import { BetTip } from '@/types';
 import { Lock, TrendingUp, Calendar, Zap, Target, BarChart3 } from 'lucide-react';
 
@@ -12,6 +15,8 @@ interface BetCardProps {
 
 export default function BetCard({ bet, isLocked = false, onUnlock }: BetCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const router = useRouter();
 
   const getBetTypeDisplay = (type: string) => {
     const types = {
@@ -62,15 +67,15 @@ export default function BetCard({ bet, isLocked = false, onUnlock }: BetCardProp
             </div>
           </div>
           <div className="text-center">
-            <h3 className="text-2xl font-bold text-accent-purple mb-3 tracking-tight">Premium Pick</h3>
-            <p className="text-gray-300 mb-6 text-lg leading-relaxed">Unlock to see expert analysis and AI predictions</p>
+            <h3 className="text-2xl font-bold text-accent-purple mb-3 tracking-tight">Institutional Model</h3>
+            <p className="text-gray-300 mb-6 text-lg leading-relaxed">Unlock to see quantitative analysis and algorithmic predictions</p>
             <button
               onClick={onUnlock}
               className="w-full btn-premium py-4 px-8 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-premium"
             >
               <span className="flex items-center justify-center gap-2">
                 <Zap className="w-5 h-5" />
-                Upgrade to Premium
+                Access Research Platform
               </span>
             </button>
           </div>
@@ -80,9 +85,10 @@ export default function BetCard({ bet, isLocked = false, onUnlock }: BetCardProp
   }
 
   const handleCardClick = () => {
-    if (bet.isPremium && !isLocked) {
+    if (bet.isPremium && !isLocked && !isNavigating) {
+      setIsNavigating(true);
       // Navigate to detailed analysis page
-      window.location.href = `/bet/${bet.id}`;
+      router.push(`/bet/${bet.id}`);
     }
   };
 
@@ -118,35 +124,44 @@ export default function BetCard({ bet, isLocked = false, onUnlock }: BetCardProp
           
           {/* Confidence circle visualization */}
           <div className="relative flex flex-col items-center">
-            <div className="relative w-20 h-20">
-              <svg className="transform -rotate-90 w-20 h-20">
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="36"
-                  stroke="rgba(255,255,255,0.1)"
-                  strokeWidth="6"
-                  fill="none"
-                />
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="36"
-                  stroke={bet.confidence >= 80 ? '#10b981' : bet.confidence >= 60 ? '#06b6d4' : '#ec4899'}
-                  strokeWidth="6"
-                  fill="none"
-                  strokeDasharray={`${2 * Math.PI * 36}`}
-                  strokeDashoffset={`${2 * Math.PI * 36 * (1 - bet.confidence / 100)}`}
-                  className="transition-all duration-1000 ease-out"
-                  strokeLinecap="round"
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className={`text-2xl font-bold ${getConfidenceColor(bet.confidence)}`}>
-                  {bet.confidence}%
+            <Tooltip 
+              content="Algorithmic confidence based on statistical models and historical performance" 
+              position="top"
+            >
+              <div className="relative w-20 h-20">
+                <svg className="transform -rotate-90 w-20 h-20">
+                  <circle
+                    cx="40"
+                    cy="40"
+                    r="36"
+                    stroke="rgba(255,255,255,0.1)"
+                    strokeWidth="6"
+                    fill="none"
+                  />
+                  <circle
+                    cx="40"
+                    cy="40"
+                    r="36"
+                    stroke={bet.confidence >= 80 ? '#10b981' : bet.confidence >= 60 ? '#06b6d4' : '#ec4899'}
+                    strokeWidth="6"
+                    fill="none"
+                    strokeDasharray={`${2 * Math.PI * 36}`}
+                    strokeDashoffset={`${2 * Math.PI * 36 * (1 - bet.confidence / 100)}`}
+                    className="transition-all duration-1000 ease-out"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  {isNavigating ? (
+                    <LoadingSpinner size="sm" color="purple" />
+                  ) : (
+                    <div className={`text-2xl font-bold ${getConfidenceColor(bet.confidence)}`}>
+                      {bet.confidence}%
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
+            </Tooltip>
             <div className="text-xs text-gray-400 mt-1 font-medium">Confidence</div>
           </div>
         </div>
@@ -181,11 +196,11 @@ export default function BetCard({ bet, isLocked = false, onUnlock }: BetCardProp
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-3">
             <Target className="w-4 h-4 text-accent-purple" />
-            <span className="text-accent-purple text-sm font-semibold uppercase tracking-wider">Expert Analysis</span>
+            <span className="text-accent-purple text-sm font-semibold uppercase tracking-wider">Quantitative Analysis</span>
           </div>
           <p className="text-gray-300 leading-relaxed">{bet.explanation}</p>
           <p className="text-xs text-gray-500 mt-3 italic">
-            *Educational analysis only. Not professional betting advice.
+            *Educational research only. Not professional investment advice.
           </p>
         </div>
 
@@ -195,14 +210,14 @@ export default function BetCard({ bet, isLocked = false, onUnlock }: BetCardProp
             <div className="text-center">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent-purple/10 rounded-full text-accent-purple text-sm font-medium border border-accent-purple/20">
                 <Zap className="w-4 h-4" />
-                Click for detailed analysis
+                Click for detailed research
               </div>
             </div>
           )}
           <button className="w-full btn-premium py-4 px-8 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-premium group-hover:shadow-glow-green">
             <span className="flex items-center justify-center gap-3">
               <TrendingUp className="w-6 h-6" />
-              View at Bookmaker
+              View Market Data
               <span className="text-sm opacity-75">({bet.odds})</span>
             </span>
           </button>
