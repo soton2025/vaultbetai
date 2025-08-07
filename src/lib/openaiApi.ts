@@ -481,10 +481,13 @@ Provide mathematically rigorous analysis with practical betting applications.
     }, {} as Record<string, { wins: number; total: number }>);
 
     return Object.entries(successByType)
-      .map(([type, stats]) => ({
-        type,
-        winRate: stats.total > 0 ? (stats.wins / stats.total) * 100 : 0
-      }))
+      .map(([type, stats]) => {
+        const typedStats = stats as { wins: number; total: number };
+        return {
+          type,
+          winRate: typedStats.total > 0 ? (typedStats.wins / typedStats.total) * 100 : 0
+        };
+      })
       .sort((a, b) => b.winRate - a.winRate)
       .slice(0, 3)
       .map(item => `${item.type} (${item.winRate.toFixed(1)}%)`)
@@ -679,7 +682,8 @@ Provide mathematically rigorous analysis with practical betting applications.
         ORDER BY date DESC, total_requests DESC
       `;
       
-      return await DatabaseService.query(query);
+      const result = await DatabaseService.query(query);
+      return result.rows || [];
     } catch (error) {
       console.error('Error fetching OpenAI API stats:', error);
       return [];

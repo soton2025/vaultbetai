@@ -83,8 +83,12 @@ export class AITipsGenerator {
         const analysis = await AIDataAnalysisService.generateComprehensiveAnalysis(match);
         if (analysis) {
           // Personalize the analysis based on user profile
-          analysis.personalizedInsights = await this.personalizeAnalysis(analysis, userProfile);
-          matchAnalyses.push(analysis);
+          const personalizedInsights = await this.personalizeAnalysis(analysis, userProfile);
+          const enhancedAnalysis = {
+            ...analysis,
+            personalizedInsights
+          };
+          matchAnalyses.push(enhancedAnalysis);
         }
       }
 
@@ -189,7 +193,7 @@ export class AITipsGenerator {
 
       // 3. Use OpenAI to analyze patterns for this specific bet type
       const patternAnalysis = await OpenAIApiService.generateAdvancedStatistics({
-        teams: suitableMatches.map(m => ({ name: m.homeTeam })),
+        teams: suitableMatches.map((m: any) => ({ name: m.homeTeam })),
         matches: suitableMatches,
         analysisType: 'prediction',
         parameters: {
@@ -200,10 +204,10 @@ export class AITipsGenerator {
       });
 
       // 4. Generate specific recommendations for each match
-      const betTypeRecommendations = [];
+      const betTypeRecommendations: any[] = [];
       for (const match of suitableMatches.slice(0, 10)) {
         const analysis = await this.generateBetTypeSpecificAnalysis(match, betType);
-        if (analysis && analysis.confidence > 65) {
+        if (analysis && (analysis as any).confidence > 65) {
           betTypeRecommendations.push(analysis);
         }
       }

@@ -84,9 +84,9 @@ export class AnalyticsPresentation {
         riskProfile: this.formatDailyRisk(dailyTips.summary.riskAssessment)
       },
 
-      qualifiedOpportunities: dailyTips.qualityTips.map(tip => this.formatOpportunityBrief(tip)),
+      qualifiedOpportunities: dailyTips.qualityTips.map((tip: any) => this.formatOpportunityBrief(tip)),
 
-      researchNotes: dailyTips.summary.keyInsights.map(insight => 
+      researchNotes: dailyTips.summary.keyInsights.map((insight: any) => 
         this.convertToResearchLanguage(insight)
       ),
 
@@ -104,7 +104,7 @@ export class AnalyticsPresentation {
         performanceMetrics: this.formatPerformanceMetrics(personalizedTips.recommendations.performanceInsights)
       },
 
-      tailoredRecommendations: personalizedTips.matchTips.map(tip => ({
+      tailoredRecommendations: personalizedTips.matchTips.map((tip: any) => ({
         fixture: tip.match,
         recommendedAction: this.formatRecommendedAction(tip.recommendation),
         personalizationFactors: this.formatPersonalizationFactors(tip.personalized),

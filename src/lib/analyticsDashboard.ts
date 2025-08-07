@@ -94,7 +94,7 @@ export class AnalyticsDashboard {
           if (intelligence.success) {
             const formatted = AnalyticsPresentation.formatMatchResearchReport(intelligence.researchReport);
             return {
-              matchId: match.id || `${match.homeTeam}_${match.awayTeam}`,
+              matchId: (match as any).id || `${match.homeTeam}_${match.awayTeam}`,
               fixture: `${match.homeTeam} vs ${match.awayTeam}`,
               league: match.league,
               kickoff: match.matchDate,

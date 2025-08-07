@@ -402,7 +402,13 @@ export class SportsApiService {
       ORDER BY month DESC, total_requests DESC
     `;
     
-    return await DatabaseService.query(query);
+    try {
+      const result = await DatabaseService.query(query);
+      return result.rows || [];
+    } catch (error) {
+      console.error('Error fetching sports API stats:', error);
+      return [];
+    }
   }
 }
 

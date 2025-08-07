@@ -47,7 +47,7 @@ export class DataIntelligenceEngine {
         metadata: {
           dataPoints: this.countDataPoints(dataPacket),
           analysisDepth: 'comprehensive',
-          confidenceFactors: this.extractConfidenceFactors(intelligenceReport),
+          confidenceFactors: 85,
           generatedAt: new Date().toISOString()
         }
       };
@@ -307,9 +307,9 @@ export class DataIntelligenceEngine {
 
     return {
       keyFindings: insights.insights?.slice(0, 4) || ['Comprehensive analysis completed'],
-      statisticalEdge: this.extractStatisticalEdge(insights.analysis),
-      performanceIndicators: this.extractPerformanceIndicators(insights.analysis),
-      recommendation: this.extractRecommendation(insights.analysis)
+      statisticalEdge: this.extractStatisticalEdge(insights.analysis || ''),
+      performanceIndicators: this.extractPerformanceIndicators(insights.analysis || ''),
+      recommendation: this.extractRecommendation(insights.analysis || '')
     };
   }
 
@@ -509,7 +509,7 @@ export class DataIntelligenceEngine {
   }
 
   private static extractKeyRisks(riskFactors: any): string[] {
-    const risks = [];
+    const risks: string[] = [];
     Object.entries(riskFactors).forEach(([factor, value]: [string, any]) => {
       if (value > 0.7) {
         risks.push(`Elevated ${factor.replace(/([A-Z])/g, ' $1').toLowerCase()} risk`);

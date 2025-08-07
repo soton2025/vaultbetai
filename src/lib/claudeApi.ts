@@ -338,7 +338,8 @@ Focus on quantitative analysis and specific actionable recommendations.
         ORDER BY date DESC, total_requests DESC
       `;
       
-      return await DatabaseService.query(query);
+      const result = await DatabaseService.query(query);
+      return result.rows || [];
     } catch (error) {
       console.error('Error fetching Claude API stats:', error);
       return [];

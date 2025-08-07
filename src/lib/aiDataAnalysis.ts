@@ -337,8 +337,9 @@ export class AIDataAnalysisService {
     let bestRate = 0;
 
     Object.entries(typeStats).forEach(([type, stats]) => {
-      const rate = stats.wins / stats.total;
-      if (rate > bestRate && stats.total >= 5) {
+      const typedStats = stats as { wins: number; total: number };
+      const rate = typedStats.wins / typedStats.total;
+      if (rate > bestRate && typedStats.total >= 5) {
         bestRate = rate;
         bestType = type;
       }
@@ -367,7 +368,7 @@ export class AIDataAnalysisService {
     return Math.sqrt(variance);
   }
 
-  private static async getCurrentBalance(userId: string): number {
+  private static async getCurrentBalance(userId: string): Promise<number> {
     const query = `
       SELECT balance FROM user_accounts 
       WHERE user_id = $1
