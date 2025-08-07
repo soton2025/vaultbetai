@@ -1,6 +1,7 @@
 import { AnalysisEngine } from './analysisEngine';
 import { SportsApiService, WeatherService } from './sportsApi';
 import { DatabaseService } from './database';
+import { ClaudeApiService } from './claudeApi';
 
 // Main Automation Pipeline for Daily Bet Generation
 export class AutomationPipeline {
@@ -189,7 +190,7 @@ export class AutomationPipeline {
     return suitableMatches.slice(0, config.maxTipsPerDay * 2); // Analyze more than we need
   }
   
-  // Analyze match and generate betting tips
+  // Analyze match and generate betting tips (with Claude AI integration)
   private static async analyzeAndGenerateTips(match: any, config: any) {
     // First, ensure the match exists in database and get UUID
     const matchUuid = await this.ensureMatchInDatabase(match);
@@ -204,45 +205,16 @@ export class AutomationPipeline {
       
       const startTime = Date.now();
       
-      // Prepare match data with correct field names for AnalysisEngine
-      const matchForAnalysis = {
-        ...match,
-        homeTeamId: matchUuid, // This should be the home team ID, let me get it properly
-        awayTeamId: matchUuid, // This should be the away team ID, let me get it properly  
-        venue: { city: match.venue || 'London' }
-      };
+      // Check if Claude API is available and enabled
+      const claudeEnabled = process.env.CLAUDE_API_KEY && process.env.CLAUDE_API_KEY !== 'your_claude_api_key_here';
       
-      // Get the proper team IDs from database
-      const matchDetails = await DatabaseService.query(
-        'SELECT home_team_id, away_team_id FROM matches WHERE id = $1',
-        [matchUuid]
-      );
-      
-      if (matchDetails.rows.length > 0) {
-        matchForAnalysis.homeTeamId = matchDetails.rows[0].home_team_id;
-        matchForAnalysis.awayTeamId = matchDetails.rows[0].away_team_id;
+      if (claudeEnabled) {
+        // Use Claude AI for advanced analysis
+        return await this.analyzeWithClaude(match, matchUuid, config, startTime);
+      } else {
+        // Fallback to existing statistical analysis
+        return await this.analyzeWithStatistics(match, matchUuid, config, startTime);
       }
-      
-      // Run comprehensive analysis
-      const analysis = await AnalysisEngine.analyzeMatch(matchForAnalysis);
-      const executionTime = Date.now() - startTime;
-      
-      // Generate tips from predictions
-      const tips = [];
-      for (const prediction of analysis.predictions) {
-        if (prediction.confidence >= config.minConfidenceThreshold) {
-          const tip = await this.createTipFromPrediction(match, prediction, analysis, matchUuid);
-          tips.push(tip);
-        }
-      }
-      
-      // Log successful analysis  
-      await DatabaseService.query(
-        'UPDATE analysis_logs SET status = $1, execution_time_ms = $2 WHERE match_id = $3 AND analysis_type = $4',
-        ['success', executionTime, matchUuid, 'FULL_ANALYSIS']
-      );
-      
-      return tips;
       
     } catch (error) {
       // Log failed analysis
@@ -253,6 +225,183 @@ export class AutomationPipeline {
       
       throw error;
     }
+  }
+
+  // Claude AI-powered analysis
+  private static async analyzeWithClaude(match: any, matchUuid: string, config: any, startTime: number) {
+    console.log(`🤖 Using Claude AI for ${match.homeTeam} vs ${match.awayTeam} analysis`);
+    
+    const tips = [];
+    const betTypes = ['btts', 'over_2_5_goals', 'home_win', 'away_win'];
+    
+    // Analyze each bet type with Claude
+    for (const betType of betTypes) {
+      try {
+        const matchData = {
+          homeTeam: match.homeTeam,
+          awayTeam: match.awayTeam,
+          league: match.league,
+          matchDate: match.matchDate,
+          betType,
+          venue: match.venue
+        };
+        
+        const claudeResult = await ClaudeApiService.generateBettingAnalysis(matchData);
+        
+        if (claudeResult.success && claudeResult.confidence && claudeResult.confidence >= config.minConfidenceThreshold) {
+          const tip = await this.createTipFromClaudeAnalysis(match, claudeResult, betType, matchUuid);
+          tips.push(tip);
+        }
+        
+        // Respect rate limits
+        await this.delay(500);
+        
+      } catch (error) {
+        console.error(`Claude analysis failed for ${betType}:`, error);
+        continue;
+      }
+    }
+    
+    const executionTime = Date.now() - startTime;
+    
+    // Log successful Claude analysis
+    await DatabaseService.query(
+      'UPDATE analysis_logs SET status = $1, execution_time_ms = $2, error_message = $3 WHERE match_id = $4 AND analysis_type = $5',
+      ['success', executionTime, `Claude AI: Generated ${tips.length} tips`, matchUuid, 'FULL_ANALYSIS']
+    );
+    
+    console.log(`✨ Claude generated ${tips.length} tips for ${match.homeTeam} vs ${match.awayTeam}`);
+    return tips;
+  }
+
+  // Statistical analysis fallback
+  private static async analyzeWithStatistics(match: any, matchUuid: string, config: any, startTime: number) {
+    console.log(`📊 Using statistical analysis for ${match.homeTeam} vs ${match.awayTeam}`);
+    
+    // Prepare match data with correct field names for AnalysisEngine
+    const matchForAnalysis = {
+      ...match,
+      homeTeamId: matchUuid, // This should be the home team ID, let me get it properly
+      awayTeamId: matchUuid, // This should be the away team ID, let me get it properly  
+      venue: { city: match.venue || 'London' }
+    };
+    
+    // Get the proper team IDs from database
+    const matchDetails = await DatabaseService.query(
+      'SELECT home_team_id, away_team_id FROM matches WHERE id = $1',
+      [matchUuid]
+    );
+    
+    if (matchDetails.rows.length > 0) {
+      matchForAnalysis.homeTeamId = matchDetails.rows[0].home_team_id;
+      matchForAnalysis.awayTeamId = matchDetails.rows[0].away_team_id;
+    }
+    
+    // Run comprehensive analysis
+    const analysis = await AnalysisEngine.analyzeMatch(matchForAnalysis);
+    const executionTime = Date.now() - startTime;
+    
+    // Generate tips from predictions
+    const tips = [];
+    for (const prediction of analysis.predictions) {
+      if (prediction.confidence >= config.minConfidenceThreshold) {
+        const tip = await this.createTipFromPrediction(match, prediction, analysis, matchUuid);
+        tips.push(tip);
+      }
+    }
+    
+    // Log successful analysis  
+    await DatabaseService.query(
+      'UPDATE analysis_logs SET status = $1, execution_time_ms = $2 WHERE match_id = $3 AND analysis_type = $4',
+      ['success', executionTime, matchUuid, 'FULL_ANALYSIS']
+    );
+    
+    return tips;
+  }
+
+  // Create betting tip from Claude analysis
+  private static async createTipFromClaudeAnalysis(match: any, claudeResult: any, betType: string, matchUuid: string) {
+    // Determine if tip should be premium based on confidence and value rating
+    const isPremium = claudeResult.confidence >= 80 || (claudeResult.valueRating && claudeResult.valueRating >= 8);
+    
+    // Estimate reasonable odds based on bet type and confidence
+    const estimatedOdds = this.estimateOddsFromConfidence(claudeResult.confidence, betType);
+    
+    // Create detailed analysis data for premium tips
+    const analysisData = isPremium ? {
+      valueRating: claudeResult.valueRating || Math.round((claudeResult.confidence - 50) / 5),
+      impliedProbability: ((1 / estimatedOdds) * 100),
+      modelProbability: claudeResult.confidence,
+      riskFactors: claudeResult.riskFactors || ['AI analysis pending validation'],
+      weatherImpact: 'neutral', // Would be enhanced with weather API
+      venueAdvantagePercentage: 75, // Default home advantage
+      marketMovement: 'stable',
+      bettingVolume: 'medium'
+    } : null;
+    
+    return {
+      matchId: matchUuid,
+      betType,
+      recommendedOdds: estimatedOdds,
+      confidenceScore: claudeResult.confidence,
+      explanation: claudeResult.analysis ? 
+        this.extractKeyInsight(claudeResult.analysis) : 
+        `Claude AI analysis indicates strong value in ${betType} market based on statistical patterns and team dynamics.`,
+      isPremium,
+      analysisData,
+      match: {
+        homeTeam: match.homeTeam,
+        awayTeam: match.awayTeam,
+        league: match.league,
+        matchDate: match.matchDate,
+        venue: match.venue
+      },
+      reasoning: claudeResult.analysis // Full Claude analysis text
+    };
+  }
+
+  // Estimate realistic odds from confidence score
+  private static estimateOddsFromConfidence(confidence: number, betType: string): number {
+    // Different bet types have different typical odd ranges
+    const baseOdds = {
+      'btts': 1.8,
+      'over_2_5_goals': 2.0,
+      'under_2_5_goals': 2.1,
+      'home_win': 2.2,
+      'away_win': 3.0,
+      'draw': 3.4
+    };
+    
+    const base = baseOdds[betType as keyof typeof baseOdds] || 2.0;
+    
+    // Adjust odds based on confidence (higher confidence = lower odds)
+    const confidenceMultiplier = confidence >= 85 ? 0.85 : 
+                                 confidence >= 75 ? 0.95 : 
+                                 confidence >= 65 ? 1.05 : 1.15;
+    
+    return parseFloat((base * confidenceMultiplier).toFixed(2));
+  }
+
+  // Extract key insight from Claude's full analysis
+  private static extractKeyInsight(analysis: string): string {
+    // Look for executive summary or first meaningful sentence
+    const sentences = analysis.split(/[.!?]+/).filter(s => s.trim().length > 50);
+    
+    if (sentences.length > 0) {
+      let insight = sentences[0].trim();
+      
+      // Ensure it ends with a period and is reasonably long
+      if (insight.length > 120) {
+        insight = insight.substring(0, 120) + '...';
+      }
+      if (!insight.endsWith('.') && !insight.endsWith('...')) {
+        insight += '.';
+      }
+      
+      return insight;
+    }
+    
+    return 'Advanced quantitative modeling identifies significant market opportunity in this fixture.';
   }
   
   // Create betting tip from prediction

@@ -13,240 +13,252 @@ export async function GET(
     const mockBetsWithAnalysis: { [key: string]: any } = {
       'free-1': {
         id: 'free-1',
-        bet_type: 'over_2_5_goals',
-        recommended_odds: 2.15,
-        confidence_score: 87,
-        explanation: 'Advanced statistical modeling indicates both teams have exceptional scoring patterns. Manchester City averages 2.8 goals per game at home this season, while Arsenal has scored in 9 of their last 10 away fixtures. Quantitative models show significant edge in this market.',
+        bet_type: 'over_1_5_goals',
+        recommended_odds: 1.75,
+        confidence_score: 89,
+        explanation: 'Crystal Palace\'s first-ever Community Shield appearance brings attacking ambition against Premier League champions Liverpool. Liverpool scored in all pre-season fixtures, while Palace will attack at Wembley seeking historic glory. Statistical models show strong edge in this market.',
         is_premium: false,
         published_at: new Date().toISOString(),
-        match_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-        home_team: 'Manchester City',
-        away_team: 'Arsenal',
-        league: 'Premier League',
+        match_date: '2025-08-10T15:00:00Z',
+        home_team: 'Crystal Palace',
+        away_team: 'Liverpool',
+        league: 'FA Community Shield',
         analysis: null // Free bet has no detailed analysis
       },
       'premium-1': {
         id: 'premium-1',
         bet_type: 'btts',
-        recommended_odds: 1.85,
-        confidence_score: 92,
-        explanation: 'Institutional-grade algorithmic analysis identifies significant market inefficiency. Advanced defensive metrics combined with offensive efficiency models predict high scoring probability across both teams.',
+        recommended_odds: 1.90,
+        confidence_score: 85,
+        explanation: 'Aston Villa\'s attacking pre-season form meets Villarreal\'s possession-based approach. Villa scored 12 goals in 4 friendlies, while Villarreal\'s technical style creates chances. Both teams prioritize attacking football in final preparations.',
         is_premium: true,
         published_at: new Date().toISOString(),
-        match_date: new Date(Date.now() + 25 * 60 * 60 * 1000).toISOString(),
-        home_team: 'Liverpool',
-        away_team: 'Chelsea',
-        league: 'Premier League',
+        match_date: '2025-08-10T20:00:00Z',
+        home_team: 'Aston Villa',
+        away_team: 'Villarreal',
+        league: 'Club Friendly',
         analysis: {
           headToHead: {
-            totalMeetings: 58,
-            homeWins: 22,
-            awayWins: 20,
-            draws: 16,
+            totalMeetings: 4,
+            homeWins: 2,
+            awayWins: 1,
+            draws: 1,
             lastMeeting: {
-              date: '2024-01-31',
-              score: '4-1',
-              result: 'Liverpool win'
+              date: '2022-04-06',
+              score: '2-1',
+              result: 'Aston Villa win'
             }
           },
           teamStats: {
             home: {
-              recentForm: ['W', 'W', 'D', 'W', 'L'],
-              goalsScored: [3, 2, 1, 4, 0],
-              goalsConceded: [1, 2, 1, 2, 3],
-              homeRecord: { wins: 8, draws: 2, losses: 1 }
+              recentForm: ['W', 'W', 'D', 'W', 'W'],
+              goalsScored: [3, 4, 2, 2, 1],
+              goalsConceded: [1, 2, 2, 0, 1],
+              homeRecord: { wins: 4, draws: 1, losses: 0 }
             },
             away: {
-              recentForm: ['W', 'W', 'W', 'D', 'W'],
-              goalsScored: [2, 3, 1, 2, 2],
-              goalsConceded: [1, 1, 0, 2, 1],
-              awayRecord: { wins: 7, draws: 3, losses: 2 }
+              recentForm: ['W', 'D', 'W', 'L', 'W'],
+              goalsScored: [2, 1, 3, 0, 2],
+              goalsConceded: [1, 1, 2, 2, 1],
+              awayRecord: { wins: 3, draws: 1, losses: 1 }
             }
           },
           keyPlayers: {
             home: [
-              { name: 'Mohamed Salah', position: 'RW', status: 'available', importance: 'key' },
-              { name: 'Virgil van Dijk', position: 'CB', status: 'available', importance: 'key' },
-              { name: 'Darwin Núñez', position: 'ST', status: 'doubtful', importance: 'important' }
+              { name: 'Ollie Watkins', position: 'ST', status: 'available', importance: 'key' },
+              { name: 'John McGinn', position: 'CM', status: 'available', importance: 'key' },
+              { name: 'Emiliano Martinez', position: 'GK', status: 'available', importance: 'important' }
             ],
             away: [
-              { name: 'Cole Palmer', position: 'AM', status: 'available', importance: 'key' },
-              { name: 'Nicolas Jackson', position: 'ST', status: 'available', importance: 'key' },
-              { name: 'Reece James', position: 'RB', status: 'injured', importance: 'important' }
+              { name: 'Gerard Moreno', position: 'ST', status: 'available', importance: 'key' },
+              { name: 'Dani Parejo', position: 'CM', status: 'available', importance: 'key' },
+              { name: 'Juan Foyth', position: 'CB', status: 'doubtful', importance: 'important' }
             ]
           },
           venue: {
-            name: 'Anfield',
-            capacity: 53394,
-            homeAdvantage: 78
+            name: 'Estadio de la Ceramica',
+            capacity: 23500,
+            homeAdvantage: 65
           },
           weather: {
-            conditions: 'Clear skies',
-            temperature: 8,
-            impact: 'neutral'
+            conditions: 'Clear',
+            temperature: 28,
+            impact: 'positive'
           },
           marketTrends: {
             openingOdds: 1.95,
-            currentOdds: 1.85,
-            movement: 'backing',
-            volume: 'high'
+            currentOdds: 1.90,
+            movement: 'slight_backing',
+            volume: 'medium'
           },
           riskFactors: [
-            'Liverpool\'s defensive frailties at set pieces',
-            'Chelsea\'s inconsistent away form against top 6',
-            'Potential rotation due to fixture congestion',
-            'Weather conditions may favor defensive play'
+            'Pre-season friendly with potential rotation',
+            'Villa\'s defensive adjustments under new system',
+            'Villarreal\'s conservative approach in friendlies',
+            'Heat conditions may reduce intensity'
           ],
           valueAnalysis: {
-            impliedProbability: 54.1,
-            modelProbability: 61.3,
-            valueRating: 8
+            impliedProbability: 52.6,
+            modelProbability: 63.2,
+            valueRating: 8.5
           }
         }
       },
       'premium-2': {
         id: 'premium-2',
-        bet_type: 'home_win',
-        recommended_odds: 1.95,
-        confidence_score: 78,
-        explanation: 'Proprietary quantitative models identify substantial market inefficiency. Barcelona\'s home dominance metrics combined with Real Madrid\'s injury concerns create compelling value backed by advanced statistical analysis.',
+        bet_type: 'arsenal_handicap_minus_1',
+        recommended_odds: 2.10,
+        confidence_score: 82,
+        explanation: 'Arsenal\'s Emirates home advantage in final pre-season preparation meets Athletic Club\'s physical approach. Arsenal\'s squad depth and home crowd create significant edge for convincing victory in Emirates Cup finale.',
         is_premium: true,
         published_at: new Date().toISOString(),
-        match_date: new Date(Date.now() + 26 * 60 * 60 * 1000).toISOString(),
-        home_team: 'Barcelona',
-        away_team: 'Real Madrid',
-        league: 'La Liga',
+        match_date: '2025-08-09T17:00:00Z',
+        home_team: 'Arsenal',
+        away_team: 'Athletic Club',
+        league: 'Emirates Cup',
         analysis: {
           headToHead: {
-            totalMeetings: 253,
-            homeWins: 97,
-            awayWins: 103,
-            draws: 53,
+            totalMeetings: 8,
+            homeWins: 4,
+            awayWins: 2,
+            draws: 2,
             lastMeeting: {
-              date: '2024-10-26',
-              score: '2-1',
-              result: 'Barcelona win'
+              date: '2023-07-22',
+              score: '4-1',
+              result: 'Arsenal win'
             }
           },
           teamStats: {
             home: {
               recentForm: ['W', 'W', 'W', 'D', 'W'],
-              goalsScored: [3, 2, 4, 1, 2],
+              goalsScored: [3, 2, 4, 1, 3],
               goalsConceded: [0, 1, 1, 1, 0],
-              homeRecord: { wins: 9, draws: 2, losses: 0 }
+              homeRecord: { wins: 4, draws: 1, losses: 0 }
             },
             away: {
-              recentForm: ['W', 'L', 'W', 'W', 'D'],
-              goalsScored: [2, 0, 3, 2, 1],
-              goalsConceded: [1, 4, 1, 0, 1],
-              awayRecord: { wins: 6, draws: 3, losses: 3 }
+              recentForm: ['D', 'W', 'L', 'W', 'D'],
+              goalsScored: [1, 2, 0, 3, 1],
+              goalsConceded: [1, 1, 2, 2, 1],
+              awayRecord: { wins: 2, draws: 2, losses: 1 }
             }
           },
           keyPlayers: {
             home: [
-              { name: 'Robert Lewandowski', position: 'ST', status: 'available', importance: 'key' },
-              { name: 'Pedri', position: 'CM', status: 'available', importance: 'key' },
-              { name: 'Gavi', position: 'CM', status: 'available', importance: 'important' }
+              { name: 'Bukayo Saka', position: 'RW', status: 'available', importance: 'key' },
+              { name: 'Martin Odegaard', position: 'AM', status: 'available', importance: 'key' },
+              { name: 'Gabriel Jesus', position: 'ST', status: 'available', importance: 'important' }
             ],
             away: [
-              { name: 'Kylian Mbappé', position: 'LW', status: 'available', importance: 'key' },
-              { name: 'Vinícius Jr.', position: 'LW', status: 'doubtful', importance: 'key' },
-              { name: 'Jude Bellingham', position: 'CM', status: 'injured', importance: 'key' }
+              { name: 'Inaki Williams', position: 'ST', status: 'available', importance: 'key' },
+              { name: 'Nico Williams', position: 'LW', status: 'available', importance: 'key' },
+              { name: 'Aymeric Laporte', position: 'CB', status: 'doubtful', importance: 'important' }
             ]
           },
           venue: {
-            name: 'Camp Nou',
-            capacity: 99354,
+            name: 'Emirates Stadium',
+            capacity: 60704,
             homeAdvantage: 82
           },
           weather: {
-            conditions: 'Partly cloudy',
-            temperature: 16,
-            impact: 'positive'
+            conditions: 'Light rain',
+            temperature: 18,
+            impact: 'neutral'
+          },
+          marketTrends: {
+            openingOdds: 2.25,
+            currentOdds: 2.10,
+            movement: 'backing',
+            volume: 'high'
           },
           riskFactors: [
-            'El Clasico unpredictability factor',
-            'Real Madrid\'s big game experience',
-            'Potential referee pressure in high-profile match',
-            'Barcelona\'s European fixture fatigue'
+            'Athletic\'s Europa League final experience',
+            'Pre-season friendly rotation policy',
+            'Weather conditions favoring physical play',
+            'Arsenal\'s tendency for slow tournament starts'
           ],
           valueAnalysis: {
-            impliedProbability: 51.3,
-            modelProbability: 58.7,
-            valueRating: 7.8
+            impliedProbability: 47.6,
+            modelProbability: 58.4,
+            valueRating: 8.2
           }
         }
       },
       'premium-3': {
         id: 'premium-3',
         bet_type: 'under_2_5_goals',
-        recommended_odds: 2.05,
-        confidence_score: 84,
-        explanation: 'Statistical modeling indicates strong defensive patterns. Both teams have evolved into defensively-solid units with low-scoring recent encounters, creating significant value in the under market.',
+        recommended_odds: 1.95,
+        confidence_score: 78,
+        explanation: 'Bournemouth\'s defensive pre-season focus meets Real Sociedad\'s controlled possession style. Both teams prioritize tactical preparation over high-scoring encounters in final friendly preparations.',
         is_premium: true,
         published_at: new Date().toISOString(),
-        match_date: new Date(Date.now() + 27 * 60 * 60 * 1000).toISOString(),
-        home_team: 'Atletico Madrid',
-        away_team: 'Sevilla',
-        league: 'La Liga',
+        match_date: '2025-08-09T17:15:00Z',
+        home_team: 'Bournemouth',
+        away_team: 'Real Sociedad',
+        league: 'Club Friendly',
         analysis: {
           headToHead: {
-            totalMeetings: 64,
-            homeWins: 28,
-            awayWins: 18,
-            draws: 18,
+            totalMeetings: 2,
+            homeWins: 1,
+            awayWins: 1,
+            draws: 0,
             lastMeeting: {
-              date: '2024-03-17',
-              score: '1-0',
-              result: 'Atletico win'
+              date: '2023-08-05',
+              score: '1-2',
+              result: 'Real Sociedad win'
             }
           },
           teamStats: {
             home: {
-              recentForm: ['W', 'D', 'W', 'D', 'W'],
-              goalsScored: [1, 0, 2, 1, 1],
-              goalsConceded: [0, 0, 1, 1, 0],
-              homeRecord: { wins: 7, draws: 4, losses: 1 }
+              recentForm: ['D', 'W', 'D', 'L', 'W'],
+              goalsScored: [1, 2, 0, 0, 1],
+              goalsConceded: [1, 1, 0, 2, 0],
+              homeRecord: { wins: 2, draws: 2, losses: 1 }
             },
             away: {
-              recentForm: ['D', 'L', 'W', 'D', 'D'],
-              goalsScored: [1, 0, 2, 0, 1],
-              goalsConceded: [1, 2, 1, 0, 1],
-              awayRecord: { wins: 4, draws: 5, losses: 3 }
+              recentForm: ['W', 'D', 'W', 'D', 'L'],
+              goalsScored: [2, 1, 1, 1, 0],
+              goalsConceded: [0, 1, 0, 1, 3],
+              awayRecord: { wins: 2, draws: 2, losses: 1 }
             }
           },
           keyPlayers: {
             home: [
-              { name: 'Jan Oblak', position: 'GK', status: 'available', importance: 'key' },
-              { name: 'José María Giménez', position: 'CB', status: 'available', importance: 'key' },
-              { name: 'Antoine Griezmann', position: 'CF', status: 'available', importance: 'important' }
+              { name: 'Dominic Solanke', position: 'ST', status: 'available', importance: 'key' },
+              { name: 'Antoine Semenyo', position: 'RW', status: 'available', importance: 'key' },
+              { name: 'Neto', position: 'GK', status: 'available', importance: 'important' }
             ],
             away: [
-              { name: 'Yassine Bono', position: 'GK', status: 'available', importance: 'key' },
-              { name: 'Sergio Ramos', position: 'CB', status: 'doubtful', importance: 'key' },
-              { name: 'Youssef En-Nesyri', position: 'ST', status: 'available', importance: 'important' }
+              { name: 'Mikel Oyarzabal', position: 'LW', status: 'available', importance: 'key' },
+              { name: 'Martin Zubimendi', position: 'DM', status: 'available', importance: 'key' },
+              { name: 'Takefusa Kubo', position: 'RW', status: 'doubtful', importance: 'important' }
             ]
           },
           venue: {
-            name: 'Wanda Metropolitano',
-            capacity: 68456,
-            homeAdvantage: 75
+            name: 'Vitality Stadium',
+            capacity: 11364,
+            homeAdvantage: 68
           },
           weather: {
-            conditions: 'Clear',
-            temperature: 12,
+            conditions: 'Overcast',
+            temperature: 16,
             impact: 'neutral'
           },
+          marketTrends: {
+            openingOdds: 2.05,
+            currentOdds: 1.95,
+            movement: 'backing',
+            volume: 'medium'
+          },
           riskFactors: [
-            'Atletico\'s occasional high-scoring home games',
-            'Sevilla\'s inconsistent away attacking form',
-            'Potential for late goals in tight matches',
-            'Historical low-scoring pattern may change'
+            'Bournemouth\'s inconsistent pre-season scoring',
+            'Real Sociedad\'s away friendly approach',
+            'Small stadium atmosphere impact',
+            'Late substitutions could change game flow'
           ],
           valueAnalysis: {
-            impliedProbability: 48.8,
-            modelProbability: 56.2,
-            valueRating: 8.4
+            impliedProbability: 51.3,
+            modelProbability: 62.1,
+            valueRating: 7.8
           }
         }
       }

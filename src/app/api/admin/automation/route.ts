@@ -134,6 +134,32 @@ export async function POST(request: NextRequest) {
         result = { message: 'All jobs stopped successfully' };
         break;
 
+      case 'test_claude_api':
+        const { ClaudeApiService } = await import('@/lib/claudeApi');
+        const isConnected = await ClaudeApiService.testConnection();
+        result = { 
+          message: isConnected ? 'Claude API connected successfully' : 'Claude API connection failed',
+          connected: isConnected 
+        };
+        break;
+
+      case 'generate_claude_sample':
+        const { ClaudeApiService: ClaudeService } = await import('@/lib/claudeApi');
+        const sampleData = {
+          homeTeam: body.homeTeam || 'Manchester United',
+          awayTeam: body.awayTeam || 'Manchester City',
+          league: body.league || 'Premier League',
+          matchDate: body.matchDate || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          betType: body.betType || 'btts',
+          venue: 'Old Trafford'
+        };
+        const claudeAnalysis = await ClaudeService.generateBettingAnalysis(sampleData);
+        result = { 
+          message: claudeAnalysis.success ? 'Claude sample analysis generated' : 'Claude analysis failed',
+          data: claudeAnalysis 
+        };
+        break;
+
       default:
         return NextResponse.json(
           { success: false, error: `Unknown action: ${action}` },
