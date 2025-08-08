@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { Filter, Crown, TrendingUp, Star, User, Shield, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import BetCard from '@/components/BetCard';
-import SubscriptionModal from '@/components/SubscriptionModal';
 import FilterPanel, { FilterState } from '@/components/FilterPanel';
 import DisclaimerBanner from '@/components/DisclaimerBanner';
 import Footer from '@/components/Footer';
@@ -15,12 +14,10 @@ import PageTransition from '@/components/PageTransition';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useUser } from '@/context/UserContext';
 import { BetTip } from '@/types';
-import { stripePromise } from '@/lib/stripe';
 
 export default function Home() {
   const { user, isLoading } = useUser();
   const router = useRouter();
-  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [showFilterPanel, setShowFilterPanel] = useState(false);
   const [, setFilters] = useState<FilterState>({
     riskLevel: [],
@@ -89,27 +86,6 @@ export default function Home() {
   const freeBet = bets.find(bet => !bet.isPremium);
   const premiumBets = bets.filter(bet => bet.isPremium);
 
-  const handleSubscribe = async () => {
-    try {
-      const stripe = await stripePromise;
-      if (!stripe) throw new Error('Stripe failed to load');
-
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId: 'price_1YOUR_PRICE_ID' }),
-      });
-
-      const { sessionId } = await response.json();
-      const { error } = await stripe.redirectToCheckout({ sessionId });
-
-      if (error) {
-        console.error('Stripe redirect error:', error);
-      }
-    } catch (error) {
-      console.error('Subscription error:', error);
-    }
-  };
 
   // Show loading only while fetching bets
   if (betsLoading) {
@@ -160,21 +136,30 @@ export default function Home() {
                   </Link>
                 </>
               ) : (
-                <Link
-                  href="#premium"
-                  className="hidden md:flex items-center gap-2 px-4 py-2 text-accent-cyan hover:text-white transition-colors font-medium"
-                >
-                  Track Record
-                </Link>
+                <>
+                  <Link
+                    href="#premium"
+                    className="hidden md:flex items-center gap-2 px-4 py-2 text-accent-cyan hover:text-white transition-colors font-medium"
+                  >
+                    Track Record
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="flex items-center gap-2 px-4 py-2 bg-dark-100 text-white rounded-xl hover:bg-dark-50 transition-all duration-300 glass-effect border border-gray-700/50 hover:border-accent-cyan/30"
+                  >
+                    <User className="w-4 h-4" />
+                    <span className="font-medium">Sign In</span>
+                  </Link>
+                </>
               )}
               
-              <button
-                onClick={() => setShowSubscriptionModal(true)}
+              <Link
+                href={user?.hasActiveSubscription ? "/dashboard" : "/signup"}
                 className="btn-premium flex items-center gap-2 px-8 py-3 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-glow-purple"
               >
                 <Crown className="w-5 h-5" />
                 {user?.hasActiveSubscription ? 'Premium Access' : 'Get Full Access'}
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -238,7 +223,7 @@ export default function Home() {
                       <BetCard 
                         bet={freeBet} 
                         isLocked={false}
-                        onUnlock={() => setShowSubscriptionModal(true)}
+                        onUnlock={() => router.push('/signup')}
                       />
                     </div>
                   ) : (
@@ -261,13 +246,13 @@ export default function Home() {
                     {user?.hasActiveSubscription ? `${premiumBets.length} models available` : `${premiumBets.length} premium models available`}
                   </div>
                   {!user?.hasActiveSubscription && (
-                    <button
-                      onClick={() => setShowSubscriptionModal(true)}
+                    <Link
+                      href="/signup"
                       className="text-accent-purple hover:text-accent-pink transition-colors font-medium text-sm flex items-center gap-1 mx-auto"
                     >
                       Get full access to unlock all models
                       <ArrowRight className="w-4 h-4" />
-                    </button>
+                    </Link>
                   )}
                 </div>
               </div>
@@ -282,7 +267,7 @@ export default function Home() {
                     <BetCard
                       bet={bet}
                       isLocked={!user?.hasActiveSubscription}
-                      onUnlock={() => setShowSubscriptionModal(true)}
+                      onUnlock={() => router.push('/signup')}
                     />
                   </div>
                 ))}
@@ -324,11 +309,6 @@ export default function Home() {
         </div>
       </main>
 
-      <SubscriptionModal
-        isOpen={showSubscriptionModal}
-        onClose={() => setShowSubscriptionModal(false)}
-        onSubscribe={handleSubscribe}
-      />
 
       <FilterPanel
         isOpen={showFilterPanel}
