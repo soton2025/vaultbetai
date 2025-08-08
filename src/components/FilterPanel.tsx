@@ -215,7 +215,7 @@ export default function FilterPanel({ isOpen, onClose, onFiltersChange, isPremiu
             </button>
             <button
               onClick={onClose}
-              className="flex-1 btn-premium py-4 px-8 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-premium"
+              className="flex-1 btn-secondary py-4 px-8 rounded-xl font-bold text-lg"
             >
               <span className="flex items-center justify-center gap-2">
                 <Filter className="w-5 h-5" />

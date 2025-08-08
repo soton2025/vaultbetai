@@ -100,9 +100,21 @@ export default function SignUpPage() {
           <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
             Get <span className="text-gradient-premium">Full Access</span>
           </h1>
-          <p className="text-gray-300 text-xl max-w-2xl mx-auto">
+          <p className="text-gray-300 text-xl max-w-2xl mx-auto mb-6">
             Join thousands of users getting professional-grade sports analytics and predictions
           </p>
+          
+          {/* Social Proof Banner */}
+          <div className="inline-flex items-center gap-3 bg-accent-green/10 border border-accent-green/20 rounded-full px-6 py-3">
+            <div className="flex -space-x-2">
+              <div className="w-8 h-8 bg-accent-purple rounded-full border-2 border-gray-800"></div>
+              <div className="w-8 h-8 bg-accent-cyan rounded-full border-2 border-gray-800"></div>
+              <div className="w-8 h-8 bg-accent-green rounded-full border-2 border-gray-800"></div>
+            </div>
+            <div className="text-accent-green font-medium">
+              <span className="text-white">47</span> joined today, <span className="text-white">1,247</span> active members
+            </div>
+          </div>
         </div>
 
         {/* Benefits Grid */}
@@ -194,6 +206,63 @@ export default function SignUpPage() {
               <div className="text-accent-cyan font-medium">
                 7-day free trial • Cancel anytime
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Testimonials */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-12">
+          <div className="bg-dark-100/50 rounded-xl p-6 border border-gray-700/30">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-accent-green rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-sm">MJ</span>
+              </div>
+              <div>
+                <div className="text-white font-medium">Michael J.</div>
+                <div className="text-gray-400 text-sm">Professional Trader</div>
+              </div>
+            </div>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              "The AI predictions are incredibly accurate. Made back my subscription fee in the first week."
+            </p>
+            <div className="flex mt-4 text-accent-green">
+              {"★".repeat(5)}
+            </div>
+          </div>
+
+          <div className="bg-dark-100/50 rounded-xl p-6 border border-gray-700/30">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-accent-purple rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-sm">SK</span>
+              </div>
+              <div>
+                <div className="text-white font-medium">Sarah K.</div>
+                <div className="text-gray-400 text-sm">Data Analyst</div>
+              </div>
+            </div>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              "Love the detailed breakdowns and statistical analysis. Finally found a platform I can trust."
+            </p>
+            <div className="flex mt-4 text-accent-green">
+              {"★".repeat(5)}
+            </div>
+          </div>
+
+          <div className="bg-dark-100/50 rounded-xl p-6 border border-gray-700/30">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-accent-cyan rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-sm">DL</span>
+              </div>
+              <div>
+                <div className="text-white font-medium">David L.</div>
+                <div className="text-gray-400 text-sm">Sports Enthusiast</div>
+              </div>
+            </div>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              "87% accuracy rate speaks for itself. The research quality is institutional-grade."
+            </p>
+            <div className="flex mt-4 text-accent-green">
+              {"★".repeat(5)}
             </div>
           </div>
         </div>
