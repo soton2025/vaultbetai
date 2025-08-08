@@ -296,8 +296,12 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-              
-            {/* Premium Section */}
+              </div>
+            </div>
+          )}
+
+          {/* Premium Section */}
+          {!betsError && bets.length > 0 && (
             <div className="section-dark py-16 -mx-6 px-6 rounded-3xl">
               <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-12">
