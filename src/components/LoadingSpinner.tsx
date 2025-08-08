@@ -2,7 +2,7 @@
 
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
-  color?: 'purple' | 'cyan' | 'green' | 'pink';
+  color?: 'purple' | 'cyan' | 'green' | 'pink' | 'white';
   text?: string;
 }
 
@@ -21,7 +21,8 @@ export default function LoadingSpinner({
     purple: 'border-accent-purple/20 border-t-accent-purple',
     cyan: 'border-accent-cyan/20 border-t-accent-cyan', 
     green: 'border-accent-green/20 border-t-accent-green',
-    pink: 'border-accent-pink/20 border-t-accent-pink'
+    pink: 'border-accent-pink/20 border-t-accent-pink',
+    white: 'border-white/20 border-t-white'
   };
 
   const textSizes = {
