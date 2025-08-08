@@ -304,17 +304,8 @@ export default function Dashboard() {
                     <Crown className="w-8 h-8 text-accent-purple animate-glow-pulse" />
                     Professional Research Models
                   </h3>
-                  <div className="text-center">
-                    <div className="text-accent-purple text-sm font-medium bg-accent-purple/10 px-4 py-2 rounded-full border border-accent-purple/20 mb-2">
-                      {premiumBets.length} advanced models available
-                    </div>
-                    <button
-                      onClick={() => setShowSubscriptionModal(true)}
-                      className="text-accent-purple hover:text-accent-pink transition-colors font-medium text-sm flex items-center gap-1"
-                    >
-                      Upgrade for full access
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
+                  <div className="text-accent-purple text-sm font-medium bg-accent-purple/10 px-4 py-2 rounded-full border border-accent-purple/20">
+                    {user.hasActiveSubscription ? `${premiumBets.length} models available` : `${premiumBets.length} premium models`}
                   </div>
                 </div>
                 
