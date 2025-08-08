@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Filter, Crown, TrendingUp, Star, User, Shield } from 'lucide-react';
+import { Filter, Crown, TrendingUp, Star, User, Shield, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import BetCard from '@/components/BetCard';
 import SubscriptionModal from '@/components/SubscriptionModal';
@@ -34,27 +34,23 @@ export default function Home() {
   const [betsLoading, setBetsLoading] = useState(true);
   const [betsError, setBetsError] = useState<string | null>(null);
 
-  // Redirect unauthenticated users to landing page
-  useEffect(() => {
-    if (!isLoading && !user) {
-      router.push('/landing');
-    }
-  }, [user, isLoading, router]);
+  // No redirect needed - show content to everyone
 
-  // Fetch betting tips from API
+  // Fetch betting tips from API - always show free content
   useEffect(() => {
     const fetchBets = async () => {
-      if (!user) return; // Don't fetch if no user
       
       try {
         setBetsLoading(true);
         setBetsError(null);
         
-        const response = await fetch('/api/bets?limit=10', {
-          headers: {
-            'X-User-Data': encodeURIComponent(JSON.stringify(user))
-          }
-        });
+        // Always fetch content - show free bet to everyone, premium to logged in users
+        const headers: Record<string, string> = {};
+        if (user) {
+          headers['X-User-Data'] = encodeURIComponent(JSON.stringify(user));
+        }
+        
+        const response = await fetch('/api/bets?limit=10', { headers });
         const data = await response.json();
         
         if (data.success && data.data) {
@@ -88,7 +84,7 @@ export default function Home() {
     };
 
     fetchBets();
-  }, [user]);
+  }, [user]); // Re-fetch when user logs in to show premium content
 
   const freeBet = bets.find(bet => !bet.isPremium);
   const premiumBets = bets.filter(bet => bet.isPremium);
@@ -115,28 +111,19 @@ export default function Home() {
     }
   };
 
-  // Show loading while checking authentication or redirecting
-  if (isLoading || (!user && !isLoading) || betsLoading) {
+  // Show loading only while fetching bets
+  if (betsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-dark-900 via-gray-900 to-dark-800">
         <PageTransition>
           <div className="text-center">
             <LoadingSpinner size="lg" color="purple" />
-            <div className="text-white text-xl font-medium mt-6">
-              {!user ? 'Checking authentication...' : 'Loading Quantitative Models...'}
-            </div>
-            <div className="text-gray-400 text-sm mt-2">
-              {!user ? 'Please wait...' : 'Analyzing market data and statistical patterns'}
-            </div>
+            <div className="text-white text-xl font-medium mt-6">Loading Today's Research...</div>
+            <div className="text-gray-400 text-sm mt-2">Analyzing market data and statistical patterns</div>
           </div>
         </PageTransition>
       </div>
     );
-  }
-
-  // Don't render anything if user is not authenticated (will be redirected)
-  if (!user) {
-    return null;
   }
 
   return (
@@ -154,31 +141,40 @@ export default function Home() {
             </div>
             
             <div className="flex items-center gap-4">
-              <button
-                onClick={() => setShowFilterPanel(true)}
-                className="flex items-center gap-2 px-5 py-3 bg-dark-100 text-white rounded-xl hover:bg-dark-50 transition-all duration-300 glass-effect border border-gray-700/50 hover:border-accent-purple/30 hover:shadow-glow-purple"
-              >
-                <Filter className="w-4 h-4" />
-                <span className="font-medium">Filters</span>
-              </button>
-              
-              <Link
-                href="/account"
-                className="flex items-center gap-2 px-5 py-3 bg-dark-100 text-white rounded-xl hover:bg-dark-50 transition-all duration-300 glass-effect border border-gray-700/50 hover:border-accent-cyan/30 hover:shadow-glow-cyan"
-              >
-                <User className="w-4 h-4" />
-                <span className="font-medium">Account</span>
-              </Link>
-              
-              {!user?.hasActiveSubscription && (
-                <button
-                  onClick={() => setShowSubscriptionModal(true)}
-                  className="btn-premium flex items-center gap-2 px-8 py-3 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-glow-purple"
+              {user ? (
+                <>
+                  <button
+                    onClick={() => setShowFilterPanel(true)}
+                    className="flex items-center gap-2 px-5 py-3 bg-dark-100 text-white rounded-xl hover:bg-dark-50 transition-all duration-300 glass-effect border border-gray-700/50 hover:border-accent-purple/30 hover:shadow-glow-purple"
+                  >
+                    <Filter className="w-4 h-4" />
+                    <span className="font-medium">Filters</span>
+                  </button>
+                  
+                  <Link
+                    href="/dashboard"
+                    className="flex items-center gap-2 px-5 py-3 bg-dark-100 text-white rounded-xl hover:bg-dark-50 transition-all duration-300 glass-effect border border-gray-700/50 hover:border-accent-cyan/30 hover:shadow-glow-cyan"
+                  >
+                    <User className="w-4 h-4" />
+                    <span className="font-medium">Dashboard</span>
+                  </Link>
+                </>
+              ) : (
+                <Link
+                  href="#premium"
+                  className="hidden md:flex items-center gap-2 px-4 py-2 text-accent-cyan hover:text-white transition-colors font-medium"
                 >
-                  <Crown className="w-5 h-5" />
-                  Go Premium
-                </button>
+                  Track Record
+                </Link>
               )}
+              
+              <button
+                onClick={() => setShowSubscriptionModal(true)}
+                className="btn-premium flex items-center gap-2 px-8 py-3 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-glow-purple"
+              >
+                <Crown className="w-5 h-5" />
+                {user?.hasActiveSubscription ? 'Premium Access' : 'Get Full Access'}
+              </button>
             </div>
           </div>
         </div>
@@ -241,7 +237,7 @@ export default function Home() {
                     <div className="animate-slide-up card-hover">
                       <BetCard 
                         bet={freeBet} 
-                        isLocked={user?.freeBetUsedToday}
+                        isLocked={false}
                         onUnlock={() => setShowSubscriptionModal(true)}
                       />
                     </div>
@@ -260,8 +256,19 @@ export default function Home() {
                   <Crown className="w-8 h-8 text-accent-purple animate-glow-pulse" />
                   Institutional Analytics
                 </h3>
-                <div className="text-accent-purple text-sm font-medium bg-accent-purple/10 px-4 py-2 rounded-full border border-accent-purple/20">
-                  {user?.hasActiveSubscription ? `${premiumBets.length} models available` : 'Unlock full research access'}
+                <div className="text-center">
+                  <div className="text-accent-purple text-sm font-medium bg-accent-purple/10 px-4 py-2 rounded-full border border-accent-purple/20 mb-2">
+                    {user?.hasActiveSubscription ? `${premiumBets.length} models available` : `${premiumBets.length} premium models available`}
+                  </div>
+                  {!user?.hasActiveSubscription && (
+                    <button
+                      onClick={() => setShowSubscriptionModal(true)}
+                      className="text-accent-purple hover:text-accent-pink transition-colors font-medium text-sm flex items-center gap-1 mx-auto"
+                    >
+                      Get full access to unlock all models
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               </div>
               
