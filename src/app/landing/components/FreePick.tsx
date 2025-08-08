@@ -36,7 +36,7 @@ export default function FreePick() {
               league: bet.league,
               date: bet.match_date
             },
-            affiliateLink: 'https://bet365.com/affiliate-link',
+            affiliateLink: '',
             isPremium: index > 0 // First bet is free, rest are premium
           }));
           

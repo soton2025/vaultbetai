@@ -13,7 +13,7 @@ export const mockBets: BetTip[] = [
       league: 'Premier League',
       date: '2024-12-20 15:30'
     },
-    affiliateLink: 'https://bet365.com/affiliate-link',
+    affiliateLink: '',
     isPremium: false
   },
   {
@@ -28,7 +28,7 @@ export const mockBets: BetTip[] = [
       league: 'Premier League',
       date: '2024-12-20 17:45'
     },
-    affiliateLink: 'https://bet365.com/affiliate-link',
+    affiliateLink: '',
     isPremium: true,
     analysis: {
       headToHead: {
@@ -109,7 +109,7 @@ export const mockBets: BetTip[] = [
       league: 'La Liga',
       date: '2024-12-21 20:00'
     },
-    affiliateLink: 'https://bet365.com/affiliate-link',
+    affiliateLink: '',
     isPremium: true,
     analysis: {
       headToHead: {
@@ -190,7 +190,7 @@ export const mockBets: BetTip[] = [
       league: 'La Liga',
       date: '2024-12-21 18:30'
     },
-    affiliateLink: 'https://bet365.com/affiliate-link',
+    affiliateLink: '',
     isPremium: true
   },
   {
@@ -205,7 +205,7 @@ export const mockBets: BetTip[] = [
       league: 'Bundesliga',
       date: '2024-12-22 15:30'
     },
-    affiliateLink: 'https://bet365.com/affiliate-link',
+    affiliateLink: '',
     isPremium: true
   },
   {
@@ -220,7 +220,7 @@ export const mockBets: BetTip[] = [
       league: 'Ligue 1',
       date: '2024-12-22 20:45'
     },
-    affiliateLink: 'https://bet365.com/affiliate-link',
+    affiliateLink: '',
     isPremium: true
   }
 ];

@@ -286,7 +286,7 @@ export async function GET(
         league: bet.league,
         date: bet.match_date
       },
-      affiliateLink: 'https://bet365.com/affiliate-link',
+      affiliateLink: '',
       isPremium: bet.is_premium,
       analysis: bet.analysis
     };

@@ -92,11 +92,6 @@ export interface User {
   createdAt?: string;
 }
 
-export interface AffiliateLink {
-  bookmaker: string;
-  url: string;
-  regions: string[];
-}
 
 export type RiskLevel = 'low' | 'medium' | 'high';
 export type BetType = BetTip['type'];

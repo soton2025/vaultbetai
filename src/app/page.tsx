@@ -7,7 +7,6 @@ import Link from 'next/link';
 import BetCard from '@/components/BetCard';
 import SubscriptionModal from '@/components/SubscriptionModal';
 import FilterPanel, { FilterState } from '@/components/FilterPanel';
-import BookmakerSection from '@/components/BookmakerSection';
 import DisclaimerBanner from '@/components/DisclaimerBanner';
 import Footer from '@/components/Footer';
 import VaultLogo from '@/components/VaultLogo';
@@ -72,7 +71,7 @@ export default function Home() {
               league: bet.league,
               date: bet.match_date
             },
-            affiliateLink: 'https://bet365.com/affiliate-link',
+            affiliateLink: '',
             isPremium: bet.is_premium
           }));
           
@@ -290,7 +289,6 @@ export default function Home() {
           <PerformanceMetrics />
         </div>
 
-        <BookmakerSection userLocation={user?.location} />
 
         <div className="text-center premium-border p-12 glass-effect-strong">
           <div className="max-w-3xl mx-auto">

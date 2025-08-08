@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '@/types';
-import { getUserLocation } from '@/utils/affiliateLinks';
+// Removed affiliate links dependency
 
 interface UserContextType {
   user: User | null;
@@ -31,6 +31,14 @@ const DEMO_USERS = {
     hasActiveSubscription: true,
     freeBetUsedToday: false,
     createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days ago
+  },
+  'admin@admin.com': {
+    id: 'admin-user',
+    name: 'Admin User',
+    email: 'admin@admin.com',
+    hasActiveSubscription: true,
+    freeBetUsedToday: false,
+    createdAt: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString(), // 1 year ago
   }
 };
 
@@ -45,8 +53,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
         const savedUser = localStorage.getItem('vault-bets-user');
         if (savedUser) {
           const parsedUser = JSON.parse(savedUser);
-          const location = await getUserLocation();
-          setUser({ ...parsedUser, location });
+          setUser(parsedUser);
         }
         // Don't auto-create users anymore - require explicit login
       } catch (error) {
@@ -67,11 +74,20 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password?: string): Promise<boolean> => {
     try {
-      // Check for demo users
+      // Special handling for admin user with password validation
+      if (email === 'admin@admin.com') {
+        if (password !== 'password123') {
+          return false;
+        }
+        const adminUser = DEMO_USERS['admin@admin.com'];
+        setUser(adminUser);
+        return true;
+      }
+
+      // Check for other demo users (no password required)
       const demoUser = DEMO_USERS[email as keyof typeof DEMO_USERS];
       if (demoUser) {
-        const location = await getUserLocation();
-        setUser({ ...demoUser, location });
+        setUser(demoUser);
         return true;
       }
 
@@ -86,8 +102,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
           createdAt: new Date().toISOString(),
         };
         
-        const location = await getUserLocation();
-        setUser({ ...newUser, location });
+        setUser(newUser);
         return true;
       }
       
