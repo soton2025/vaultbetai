@@ -19,6 +19,7 @@ export default function FreePick() {
         setLoading(true);
         setError(null);
         
+        // For landing page, don't send user data - show free content only
         const response = await fetch('/api/bets?limit=6');
         const data = await response.json();
         

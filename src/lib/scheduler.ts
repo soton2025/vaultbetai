@@ -99,14 +99,14 @@ export class SchedulerService {
       }
     }, {
       scheduled: false,
-      timezone: 'UTC'
+      timezone: 'Europe/London' // Use UK timezone instead of UTC
     });
 
     this.jobs.set('dailyTipGeneration', task);
     this.jobStatus.set('dailyTipGeneration', true);
     task.start();
     
-    console.log(`📅 Daily tip generation scheduled for ${time} UTC`);
+    console.log(`📅 Daily tip generation scheduled for ${time} UK time (Europe/London)`);
   }
 
   // Schedule regular odds updates
@@ -126,14 +126,14 @@ export class SchedulerService {
       }
     }, {
       scheduled: false,
-      timezone: 'UTC'
+      timezone: 'Europe/London' // Use UK timezone for consistency
     });
 
     this.jobs.set('oddsUpdates', task);
     this.jobStatus.set('oddsUpdates', true);
     task.start();
     
-    console.log(`📊 Odds updates scheduled every ${intervalMinutes} minutes`);
+    console.log(`📊 Odds updates scheduled every ${intervalMinutes} minutes (UK time)`);
   }
 
   // Update betting odds for upcoming matches
@@ -233,14 +233,14 @@ export class SchedulerService {
       }
     }, {
       scheduled: false,
-      timezone: 'UTC'
+      timezone: 'Europe/London' // Use UK timezone for consistency
     });
 
     this.jobs.set('dataCleanup', task);
     this.jobStatus.set('dataCleanup', true);
     task.start();
     
-    console.log('🧹 Data cleanup scheduled for 2:00 AM UTC daily');
+    console.log('🧹 Data cleanup scheduled for 2:00 AM UK time daily');
   }
 
   // Schedule health checks
@@ -253,14 +253,14 @@ export class SchedulerService {
       }
     }, {
       scheduled: false,
-      timezone: 'UTC'
+      timezone: 'Europe/London' // Use UK timezone for consistency
     });
 
     this.jobs.set('healthCheck', task);
     this.jobStatus.set('healthCheck', true);
     task.start();
     
-    console.log('❤️ Health checks scheduled every 15 minutes');
+    console.log('❤️ Health checks scheduled every 15 minutes (UK time)');
   }
 
   // Perform system health check
@@ -329,14 +329,14 @@ export class SchedulerService {
       }
     }, {
       scheduled: false,
-      timezone: 'UTC'
+      timezone: 'Europe/London' // Use UK timezone for consistency
     });
 
     this.jobs.set('performanceTracking', task);
     this.jobStatus.set('performanceTracking', true);
     task.start();
     
-    console.log('📈 Performance tracking scheduled daily at midnight UTC');
+    console.log('📈 Performance tracking scheduled daily at midnight UK time');
   }
 
   // Calculate performance metrics for published tips

@@ -84,10 +84,12 @@ export interface BetTip {
 
 export interface User {
   id: string;
+  name?: string;
   email: string;
   hasActiveSubscription: boolean;
   freeBetUsedToday: boolean;
   location?: string;
+  createdAt?: string;
 }
 
 export interface AffiliateLink {

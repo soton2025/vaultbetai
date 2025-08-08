@@ -1,29 +1,16 @@
-import { Metadata } from 'next';
+'use client';
+
+import { useState } from 'react';
 import { TrendingUp, Shield, Crown, Star, Zap, BarChart3, Target, Calendar, ArrowRight, Users, Award, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import VaultLogo from '@/components/VaultLogo';
 import DisclaimerBanner from '@/components/DisclaimerBanner';
 import Footer from '@/components/Footer';
 import FreePick from './components/FreePick';
-
-export const metadata: Metadata = {
-  title: 'Beat the Market with AI-Powered Sports Analysis | Vault Bets',
-  description: 'Vault Bets finds value bets using advanced statistical models. Transparent, proven results. 87.3% accuracy, 12.8% ROI, 73.2% win rate. Not betting advice — just winning research.',
-  keywords: 'sports betting, AI analysis, value bets, statistical models, betting tips, sports analytics',
-  openGraph: {
-    title: 'Beat the Market with AI-Powered Sports Analysis',
-    description: 'Advanced quantitative modeling for sports analysis. 87.3% accuracy with transparent results.',
-    type: 'website',
-    locale: 'en_US',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Beat the Market with AI-Powered Sports Analysis',
-    description: 'Advanced quantitative modeling for sports analysis. 87.3% accuracy with transparent results.',
-  }
-};
+import SignInModal from './components/SignInModal';
 
 export default function LandingPage() {
+  const [showSignInModal, setShowSignInModal] = useState(false);
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -51,12 +38,12 @@ export default function LandingPage() {
               >
                 Track Record
               </Link>
-              <Link
-                href="/account"
+              <button
+                onClick={() => setShowSignInModal(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-dark-100 text-white rounded-xl hover:bg-dark-50 transition-all duration-300 glass-effect border border-gray-700/50 hover:border-accent-cyan/30"
               >
                 Sign In
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -239,6 +226,11 @@ export default function LandingPage() {
           </div>
         </section>
       </main>
+
+      <SignInModal 
+        isOpen={showSignInModal} 
+        onClose={() => setShowSignInModal(false)} 
+      />
 
       <Footer />
     </div>

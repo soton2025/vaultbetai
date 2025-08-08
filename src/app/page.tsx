@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Filter, Crown, TrendingUp, Star, User, Shield } from 'lucide-react';
 import Link from 'next/link';
 import BetCard from '@/components/BetCard';
@@ -19,6 +20,7 @@ import { stripePromise } from '@/lib/stripe';
 
 export default function Home() {
   const { user, isLoading } = useUser();
+  const router = useRouter();
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [showFilterPanel, setShowFilterPanel] = useState(false);
   const [, setFilters] = useState<FilterState>({
@@ -33,14 +35,27 @@ export default function Home() {
   const [betsLoading, setBetsLoading] = useState(true);
   const [betsError, setBetsError] = useState<string | null>(null);
 
+  // Redirect unauthenticated users to landing page
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push('/landing');
+    }
+  }, [user, isLoading, router]);
+
   // Fetch betting tips from API
   useEffect(() => {
     const fetchBets = async () => {
+      if (!user) return; // Don't fetch if no user
+      
       try {
         setBetsLoading(true);
         setBetsError(null);
         
-        const response = await fetch('/api/bets?limit=10');
+        const response = await fetch('/api/bets?limit=10', {
+          headers: {
+            'X-User-Data': encodeURIComponent(JSON.stringify(user))
+          }
+        });
         const data = await response.json();
         
         if (data.success && data.data) {
@@ -74,7 +89,7 @@ export default function Home() {
     };
 
     fetchBets();
-  }, []);
+  }, [user]);
 
   const freeBet = bets.find(bet => !bet.isPremium);
   const premiumBets = bets.filter(bet => bet.isPremium);
@@ -101,18 +116,28 @@ export default function Home() {
     }
   };
 
-  if (isLoading || betsLoading) {
+  // Show loading while checking authentication or redirecting
+  if (isLoading || (!user && !isLoading) || betsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-dark-900 via-gray-900 to-dark-800">
         <PageTransition>
           <div className="text-center">
             <LoadingSpinner size="lg" color="purple" />
-            <div className="text-white text-xl font-medium mt-6">Loading Quantitative Models...</div>
-            <div className="text-gray-400 text-sm mt-2">Analyzing market data and statistical patterns</div>
+            <div className="text-white text-xl font-medium mt-6">
+              {!user ? 'Checking authentication...' : 'Loading Quantitative Models...'}
+            </div>
+            <div className="text-gray-400 text-sm mt-2">
+              {!user ? 'Please wait...' : 'Analyzing market data and statistical patterns'}
+            </div>
           </div>
         </PageTransition>
       </div>
     );
+  }
+
+  // Don't render anything if user is not authenticated (will be redirected)
+  if (!user) {
+    return null;
   }
 
   return (

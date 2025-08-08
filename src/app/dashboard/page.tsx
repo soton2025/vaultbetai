@@ -29,18 +29,10 @@ import PageTransition from '@/components/PageTransition';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { BetTip } from '@/types';
 import { stripePromise } from '@/lib/stripe';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  hasActiveSubscription: boolean;
-  freeBetUsedToday: boolean;
-  createdAt: string;
-}
+import { useUser } from '@/context/UserContext';
 
 export default function Dashboard() {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, logout } = useUser();
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [bets, setBets] = useState<BetTip[]>([]);
@@ -51,27 +43,31 @@ export default function Dashboard() {
 
   useEffect(() => {
     // Check if user is logged in
-    const userData = localStorage.getItem('vault-bets-user');
-    if (!userData) {
+    if (!user) {
       router.push('/landing');
       return;
     }
-    
-    const parsedUser = JSON.parse(userData);
-    setUser(parsedUser);
 
     // Check days since signup to trigger upgrade prompts
-    const daysSinceSignup = Math.floor((Date.now() - new Date(parsedUser.createdAt).getTime()) / (1000 * 60 * 60 * 24));
-    setUpgradePromptCount(daysSinceSignup >= 3 ? 1 : 0);
-  }, [router]);
+    if (user.createdAt) {
+      const daysSinceSignup = Math.floor((Date.now() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24));
+      setUpgradePromptCount(daysSinceSignup >= 3 ? 1 : 0);
+    }
+  }, [router, user]);
 
   useEffect(() => {
     const fetchBets = async () => {
+      if (!user) return; // Don't fetch if no user
+      
       try {
         setBetsLoading(true);
         setBetsError(null);
         
-        const response = await fetch('/api/bets?limit=8');
+        const response = await fetch('/api/bets?limit=8', {
+          headers: {
+            'X-User-Data': encodeURIComponent(JSON.stringify(user))
+          }
+        });
         const data = await response.json();
         
         if (data.success && data.data) {
@@ -88,7 +84,7 @@ export default function Dashboard() {
               date: bet.match_date
             },
             affiliateLink: 'https://bet365.com/affiliate-link',
-            isPremium: index > 1 // First 2 bets are free, rest are premium
+            isPremium: bet.is_premium
           }));
           
           setBets(transformedBets);
@@ -134,7 +130,7 @@ export default function Dashboard() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('vault-bets-user');
+    logout();
     router.push('/landing');
   };
 
@@ -181,19 +177,21 @@ export default function Dashboard() {
                     className="flex items-center gap-3 px-4 py-2 bg-dark-100 text-white rounded-xl hover:bg-dark-50 transition-all duration-300 glass-effect border border-gray-700/50 hover:border-accent-cyan/30"
                   >
                     <div className="w-8 h-8 bg-gradient-to-br from-accent-purple to-accent-pink rounded-full flex items-center justify-center text-white font-bold text-sm">
-                      {user.name.charAt(0).toUpperCase()}
+                      {(user.name || user.email).charAt(0).toUpperCase()}
                     </div>
-                    <span className="hidden md:block font-medium">{user.name}</span>
+                    <span className="hidden md:block font-medium">{user.name || user.email.split('@')[0]}</span>
                   </button>
                   
                   {showUserMenu && (
                     <div className="absolute right-0 mt-2 w-56 bg-dark-100 border border-gray-700/50 rounded-xl shadow-premium glass-effect-strong animate-scale-in">
                       <div className="p-4 border-b border-gray-700/50">
-                        <div className="text-white font-medium">{user.name}</div>
+                        <div className="text-white font-medium">{user.name || user.email.split('@')[0]}</div>
                         <div className="text-gray-400 text-sm">{user.email}</div>
                         <div className="flex items-center gap-2 mt-2">
-                          <div className="w-2 h-2 bg-accent-cyan rounded-full" />
-                          <span className="text-accent-cyan text-xs font-medium">Free Account</span>
+                          <div className={`w-2 h-2 rounded-full ${user.hasActiveSubscription ? 'bg-accent-purple' : 'bg-accent-cyan'}`} />
+                          <span className={`text-xs font-medium ${user.hasActiveSubscription ? 'text-accent-purple' : 'text-accent-cyan'}`}>
+                            {user.hasActiveSubscription ? 'Premium Account' : 'Free Account'}
+                          </span>
                         </div>
                       </div>
                       <div className="p-2">
@@ -236,7 +234,7 @@ export default function Dashboard() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
               <div>
                 <h2 className="text-4xl font-bold text-white mb-3 tracking-tight">
-                  Welcome back, <span className="text-gradient-premium">{user.name.split(' ')[0]}</span>
+                  Welcome back, <span className="text-gradient-premium">{(user.name || user.email.split('@')[0]).split(' ')[0]}</span>
                 </h2>
                 <p className="text-gray-300 text-lg">
                   Your AI-powered research platform is ready. {freeBets.length} free models available today.
@@ -250,7 +248,7 @@ export default function Dashboard() {
                     <span className="text-accent-purple font-bold">Ready for More?</span>
                   </div>
                   <p className="text-gray-300 text-sm mb-3">
-                    You've been exploring for {Math.floor((Date.now() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24))} days. Unlock full access!
+                    You've been exploring for {user.createdAt ? Math.floor((Date.now() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24)) : 3} days. Unlock full access!
                   </p>
                   <button
                     onClick={() => setShowSubscriptionModal(true)}
