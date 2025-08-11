@@ -8,6 +8,18 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const premiumOnly = searchParams.get('premium') === 'true';
     const includeUnpublished = searchParams.get('debug') === 'true';
+    
+    // Get user data from request headers (set by client)
+    const userDataHeader = request.headers.get('X-User-Data');
+    let user: any = null;
+    
+    if (userDataHeader) {
+      try {
+        user = JSON.parse(decodeURIComponent(userDataHeader));
+      } catch (e) {
+        console.error('Invalid user data header:', e);
+      }
+    }
 
     // Query real betting tips from database with proper JOINs
     let query = `
@@ -112,10 +124,20 @@ export async function GET(request: NextRequest) {
         }
       ];
 
-      // Filter based on premium parameter if specified
+      // Filter based on user subscription status
       let filteredBets = sampleBets;
-      if (premiumOnly) {
+      
+      // If user doesn't have active subscription, only return non-premium bets
+      if (!user?.hasActiveSubscription) {
+        filteredBets = sampleBets.filter(bet => !bet.is_premium);
+      }
+      
+      // If premium only is requested and user has subscription
+      if (premiumOnly && user?.hasActiveSubscription) {
         filteredBets = sampleBets.filter(bet => bet.is_premium);
+      } else if (premiumOnly && !user?.hasActiveSubscription) {
+        // If premium requested but user doesn't have subscription, return empty
+        filteredBets = [];
       }
 
       return NextResponse.json({
@@ -123,7 +145,8 @@ export async function GET(request: NextRequest) {
         data: filteredBets.slice(0, limit),
         count: filteredBets.length,
         total: filteredBets.length,
-        message: "Sample data - Generate real tips via admin dashboard."
+        message: user?.hasActiveSubscription ? "Sample data - Generate real tips via admin dashboard." : "Free user - Limited access",
+        userStatus: user?.hasActiveSubscription ? 'premium' : 'free'
       });
     }
 

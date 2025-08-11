@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { X, Mail, User, Lock, Zap, Star, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useUser } from '@/context/UserContext';
 
 interface SignUpModalProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface SignUpModalProps {
 }
 
 export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
+  const { login } = useUser();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -68,49 +70,40 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
     setError(null);
 
     try {
-      // Simulate API call for now - replace with actual user creation
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Use the login function from UserContext which handles user creation
+      const loginSuccess = await login(formData.email, formData.password);
       
-      // Store user data in localStorage for demo
-      const newUser = {
-        id: crypto.randomUUID(),
-        name: formData.name,
-        email: formData.email,
-        hasActiveSubscription: false,
-        freeBetUsedToday: false,
-        createdAt: new Date().toISOString()
-      };
-      
-      localStorage.setItem('vault-bets-user', JSON.stringify(newUser));
-      
-      // Send welcome email
-      try {
-        await fetch('/api/email-automation', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'welcome',
-            user: {
-              id: newUser.id,
-              email: newUser.email,
-              name: newUser.name,
-              signupDate: newUser.createdAt,
-              hasActiveSubscription: newUser.hasActiveSubscription
-            }
-          })
-        });
-      } catch (emailError) {
-        console.error('Failed to send welcome email:', emailError);
-        // Don't fail signup if email fails
+      if (loginSuccess) {
+        // Send welcome email
+        try {
+          await fetch('/api/email-automation', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'welcome',
+              user: {
+                email: formData.email,
+                name: formData.name,
+                signupDate: new Date().toISOString(),
+                hasActiveSubscription: false
+              }
+            })
+          });
+        } catch (emailError) {
+          console.error('Failed to send welcome email:', emailError);
+          // Don't fail signup if email fails
+        }
+        
+        setIsSuccess(true);
+        
+        // Redirect to dashboard after a short delay
+        setTimeout(() => {
+          onClose();
+          router.push('/dashboard');
+        }, 2000);
+      } else {
+        setError('Failed to create account. Please check your information.');
       }
-      
-      setIsSuccess(true);
-      
-      // Redirect to dashboard after a short delay
-      setTimeout(() => {
-        onClose();
-        router.push('/dashboard');
-      }, 2000);
       
     } catch (error) {
       console.error('Sign up error:', error);
@@ -167,6 +160,16 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
             <p className="text-gray-300 text-lg">
               Access 5+ daily AI research models and advanced analytics
             </p>
+            
+            {/* Demo credentials */}
+            <div className="mt-6 p-4 bg-dark-100 rounded-lg border border-gray-700/50">
+              <div className="text-xs text-gray-400 mb-2 uppercase tracking-wider">Demo Accounts</div>
+              <div className="space-y-1 text-sm">
+                <div className="text-accent-cyan">demo@free.com - Free Account</div>
+                <div className="text-accent-purple">demo@premium.com - Premium Account</div>
+              </div>
+              <div className="text-xs text-gray-500 mt-2">Use any password or create your own account</div>
+            </div>
           </div>
 
           {/* Social Sign Up Options */}

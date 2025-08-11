@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from './LoadingSpinner';
-import Tooltip from './Tooltip';
 import { BetTip } from '@/types';
 import { Lock, TrendingUp, Calendar, Zap, Target, BarChart3 } from 'lucide-react';
 
@@ -14,7 +13,6 @@ interface BetCardProps {
 }
 
 export default function BetCard({ bet, isLocked = false, onUnlock }: BetCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   const router = useRouter();
 
@@ -118,51 +116,31 @@ export default function BetCard({ bet, isLocked = false, onUnlock }: BetCardProp
   const getConfidenceColor = (confidence: number) => {
     if (confidence >= 80) return 'text-accent-green';
     if (confidence >= 60) return 'text-accent-cyan';
-    return 'text-accent-pink';
-  };
-
-  const getConfidenceGlow = (confidence: number) => {
-    if (confidence >= 80) return 'shadow-glow-green';
-    if (confidence >= 60) return 'shadow-glow-cyan';
-    return 'shadow-glow-pink';
-  };
-
-  const getConfidenceBg = (confidence: number) => {
-    if (confidence >= 80) return 'from-accent-green/20 to-accent-green/5';
-    if (confidence >= 60) return 'from-accent-cyan/20 to-accent-cyan/5';
-    return 'from-accent-pink/20 to-accent-pink/5';
-  };
-
-  const getConfidenceBorder = (confidence: number) => {
-    if (confidence >= 80) return 'border-accent-green/30';
-    if (confidence >= 60) return 'border-accent-cyan/30';
-    return 'border-accent-pink/30';
+    return 'text-accent-purple';
   };
 
   if (isLocked) {
     return (
-      <div className="relative bg-gradient-to-br from-dark-100 to-dark-200 rounded-2xl p-8 glass-effect-strong group hover:scale-105 transition-all duration-500 border border-accent-purple/20 hover:border-accent-purple/40">
-        <div className="absolute inset-0 bg-gradient-to-br from-accent-purple/10 via-accent-pink/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        <div className="relative z-10">
+      <div className="relative bg-dark-100 rounded-2xl p-8 border border-accent-purple/20 transition-all duration-300 hover:border-accent-purple/40">
+        <div className="text-center">
           <div className="flex items-center justify-center mb-6">
-            <div className="relative">
-              <Lock className="w-16 h-16 text-accent-purple animate-glow-pulse" />
-              <div className="absolute inset-0 w-16 h-16 border-2 border-accent-purple/30 rounded-full animate-ping" />
-            </div>
+            <Lock className="w-16 h-16 text-accent-purple" />
           </div>
-          <div className="text-center">
-            <h3 className="text-2xl font-bold text-accent-purple mb-3 tracking-tight">Institutional Model</h3>
-            <p className="text-gray-300 mb-6 text-lg leading-relaxed">Unlock to see quantitative analysis and algorithmic predictions</p>
-            <button
-              onClick={onUnlock}
-              className="w-full btn-premium py-4 px-8 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-premium"
-            >
-              <span className="flex items-center justify-center gap-2">
-                <Zap className="w-5 h-5" />
-                Access Research Platform
-              </span>
-            </button>
+          <h3 className="text-2xl font-bold text-accent-purple mb-3">Premium Analysis</h3>
+          <p className="text-gray-300 mb-4 text-lg">Unlock detailed research and predictions</p>
+          <div className="flex items-center justify-center gap-2 mb-6 text-sm text-accent-cyan">
+            <div className="w-1.5 h-1.5 bg-accent-cyan rounded-full animate-pulse"></div>
+            <span>7-day free trial</span>
           </div>
+          <button
+            onClick={onUnlock}
+            className="w-full btn-premium py-4 px-8 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105"
+          >
+            <span className="flex items-center justify-center gap-2">
+              <Zap className="w-5 h-5" />
+              Access Research Platform
+            </span>
+          </button>
         </div>
       </div>
     );
@@ -178,26 +156,17 @@ export default function BetCard({ bet, isLocked = false, onUnlock }: BetCardProp
 
   return (
     <div
-      className={`relative bg-gradient-to-br ${getConfidenceBg(bet.confidence)} rounded-2xl p-8 glass-effect-strong transition-all duration-500 cursor-pointer border ${getConfidenceBorder(bet.confidence)} hover:scale-105 hover:shadow-premium group ${
-        isHovered ? getConfidenceGlow(bet.confidence) : ''
-      } ${bet.isPremium && !isLocked ? 'hover:border-accent-purple/60' : ''}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className="relative bg-dark-100 rounded-2xl p-8 border border-gray-700/30 transition-all duration-300 cursor-pointer hover:border-accent-purple/40 hover:scale-102"
       onClick={handleCardClick}
     >
-      <div className={`absolute inset-0 rounded-2xl transition-opacity duration-500 ${
-        isHovered ? 'opacity-20' : 'opacity-0'
-      } bg-gradient-to-br ${getConfidenceBg(bet.confidence)}`} />
-      
-      <div className="relative z-10">
+      <div>
         {/* Header with league and confidence */}
         <div className="flex justify-between items-start mb-6">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-2 h-2 bg-accent-cyan rounded-full animate-pulse" />
               <span className="text-sm font-medium text-accent-cyan uppercase tracking-wider">{bet.match.league}</span>
             </div>
-            <h3 className="text-xl font-bold text-white mb-2 leading-tight tracking-tight">
+            <h3 className="text-xl font-bold text-white mb-2">
               {bet.match.homeTeam} <span className="text-gray-400">vs</span> {bet.match.awayTeam}
             </h3>
             <div className="flex items-center gap-2">
@@ -206,47 +175,16 @@ export default function BetCard({ bet, isLocked = false, onUnlock }: BetCardProp
             </div>
           </div>
           
-          {/* Confidence circle visualization */}
-          <div className="relative flex flex-col items-center">
-            <Tooltip 
-              content="Algorithmic confidence based on statistical models and historical performance" 
-              position="top"
-            >
-              <div className="relative w-20 h-20">
-                <svg className="transform -rotate-90 w-20 h-20">
-                  <circle
-                    cx="40"
-                    cy="40"
-                    r="36"
-                    stroke="rgba(255,255,255,0.1)"
-                    strokeWidth="6"
-                    fill="none"
-                  />
-                  <circle
-                    cx="40"
-                    cy="40"
-                    r="36"
-                    stroke={bet.confidence >= 80 ? '#10b981' : bet.confidence >= 60 ? '#06b6d4' : '#ec4899'}
-                    strokeWidth="6"
-                    fill="none"
-                    strokeDasharray={`${2 * Math.PI * 36}`}
-                    strokeDashoffset={`${2 * Math.PI * 36 * (1 - bet.confidence / 100)}`}
-                    className="transition-all duration-1000 ease-out"
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  {isNavigating ? (
-                    <LoadingSpinner size="sm" color="purple" />
-                  ) : (
-                    <div className={`text-2xl font-bold ${getConfidenceColor(bet.confidence)}`}>
-                      {bet.confidence}%
-                    </div>
-                  )}
-                </div>
-              </div>
-            </Tooltip>
-            <div className="text-xs text-gray-400 mt-1 font-medium">Confidence</div>
+          {/* Confidence display */}
+          <div className="text-center">
+            <div className={`text-3xl font-bold ${getConfidenceColor(bet.confidence)} mb-1`}>
+              {isNavigating ? (
+                <LoadingSpinner size="sm" color="purple" />
+              ) : (
+                `${bet.confidence}%`
+              )}
+            </div>
+            <div className="text-xs text-gray-400 font-medium">Confidence</div>
           </div>
         </div>
 
@@ -254,37 +192,25 @@ export default function BetCard({ bet, isLocked = false, onUnlock }: BetCardProp
         <div className="mb-6">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
-              <Target className="w-5 h-5 text-accent-pink" />
-              <span className="text-accent-pink font-bold text-lg">{getBetTypeDisplay(bet.type)}</span>
+              <Target className="w-5 h-5 text-accent-purple" />
+              <span className="text-white font-bold text-lg">{getBetTypeDisplay(bet.type)}</span>
             </div>
             <div className="flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-accent-green" />
               <span className="text-accent-green text-2xl font-bold">{bet.odds}</span>
             </div>
           </div>
-          
-          {/* Visual odds indicator */}
-          <div className="bg-dark-300/50 rounded-full p-1">
-            <div
-              className={`h-2 rounded-full transition-all duration-1000 ${
-                bet.confidence >= 80 ? 'bg-gradient-to-r from-accent-green to-accent-cyan' :
-                bet.confidence >= 60 ? 'bg-gradient-to-r from-accent-cyan to-accent-blue' : 
-                'bg-gradient-to-r from-accent-pink to-accent-purple'
-              }`}
-              style={{ width: `${bet.confidence}%` }}
-            />
-          </div>
         </div>
 
-        {/* Expert Analysis */}
+        {/* Analysis */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-3">
             <Target className="w-4 h-4 text-accent-purple" />
-            <span className="text-accent-purple text-sm font-semibold uppercase tracking-wider">Quantitative Analysis</span>
+            <span className="text-accent-purple text-sm font-semibold uppercase tracking-wider">Analysis</span>
           </div>
           <p className="text-gray-300 leading-relaxed">{bet.explanation}</p>
-          <p className="text-xs text-gray-500 mt-3 italic">
-            *Educational research only. Not professional investment advice.
+          <p className="text-xs text-gray-500 mt-3">
+            *Educational research only. Not investment advice.
           </p>
         </div>
 
@@ -298,9 +224,9 @@ export default function BetCard({ bet, isLocked = false, onUnlock }: BetCardProp
               </div>
             </div>
           )}
-          <button className="w-full btn-premium py-4 px-8 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-premium group-hover:shadow-glow-green">
+          <button className="w-full bg-dark-200 border border-gray-600/50 py-3 px-6 rounded-xl text-white font-medium transition-all duration-300 hover:bg-dark-100 hover:border-gray-500/50">
             <span className="flex items-center justify-center gap-3">
-              <TrendingUp className="w-6 h-6" />
+              <TrendingUp className="w-5 h-5" />
               View Market Data
               <span className="text-sm opacity-75">({bet.odds})</span>
             </span>

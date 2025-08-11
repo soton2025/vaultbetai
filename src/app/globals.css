@@ -59,10 +59,10 @@
 
 @keyframes glowPulse {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 0 15px rgba(123, 63, 228, 0.2);
   }
   50% {
-    box-shadow: 0 0 40px rgba(99, 102, 241, 0.6), 0 0 60px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 0 25px rgba(123, 63, 228, 0.4);
   }
 }
 
@@ -111,12 +111,12 @@ body {
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
 }
 
-/* Premium border effects */
+/* Clean border effects */
 .premium-border {
   position: relative;
   border-radius: 16px;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(236, 72, 153, 0.3) 50%, rgba(16, 185, 129, 0.3) 100%);
+  background: linear-gradient(135deg, rgba(123, 63, 228, 0.4) 0%, rgba(44, 211, 225, 0.4) 100%);
 }
 
 .premium-border::before {
@@ -128,25 +128,25 @@ body {
   z-index: -1;
 }
 
-/* Enhanced glow effects */
+/* Clean glow effects */
 .glow-purple {
-  box-shadow: 0 0 30px rgba(99, 102, 241, 0.4), 0 0 60px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 0 20px rgba(123, 63, 228, 0.25);
 }
 
-.glow-pink {
-  box-shadow: 0 0 30px rgba(236, 72, 153, 0.4), 0 0 60px rgba(236, 72, 153, 0.2);
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(44, 211, 225, 0.25);
 }
 
 .glow-green {
-  box-shadow: 0 0 30px rgba(16, 185, 129, 0.4), 0 0 60px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
 }
 
-/* Premium buttons */
+/* Primary action buttons */
 .btn-premium {
   position: relative;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.9) 0%, rgba(236, 72, 153, 0.9) 100%);
+  background: linear-gradient(135deg, #7B3FE4 0%, #2CD3E1 100%);
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
 }
@@ -164,9 +164,9 @@ body {
   transform: translateX(100%);
 }
 
-/* Premium text effects */
+/* Brand text effects */
 .text-premium {
-  background: linear-gradient(135deg, #6366f1 0%, #ec4899 50%, #10b981 100%);
+  background: linear-gradient(135deg, #7B3FE4 0%, #2CD3E1 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -193,12 +193,57 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.6) 0%, rgba(236, 72, 153, 0.6) 100%);
+  background: linear-gradient(135deg, rgba(123, 63, 228, 0.6) 0%, rgba(44, 211, 225, 0.6) 100%);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.8) 0%, rgba(236, 72, 153, 0.8) 100%);
+  background: linear-gradient(135deg, rgba(123, 63, 228, 0.8) 0%, rgba(44, 211, 225, 0.8) 100%);
+}
+
+/* Secondary buttons - clean utility style */
+.btn-secondary {
+  background: #141316;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: #161618;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Outline buttons for less prominent actions */
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(123, 63, 228, 0.3);
+  color: #7B3FE4;
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+  background: rgba(123, 63, 228, 0.1);
+  border-color: rgba(123, 63, 228, 0.5);
+}
+
+/* Section backgrounds for visual breathing room */
+.section-light {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.section-dark {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Gradient text shorthand */
+.text-gradient-brand {
+  background: linear-gradient(135deg, #7B3FE4 0%, #2CD3E1 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Focus states */

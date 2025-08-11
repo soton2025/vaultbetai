@@ -53,7 +53,7 @@ export default function ContactPage() {
             </p>
             <Link 
               href="/"
-              className="btn-premium py-3 px-8 rounded-xl font-bold transition-all duration-300 transform hover:scale-105 shadow-premium inline-block"
+              className="btn-outline py-3 px-8 rounded-xl font-bold inline-block"
             >
               Back to Home
             </Link>

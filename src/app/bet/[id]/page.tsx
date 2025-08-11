@@ -419,7 +419,7 @@ export default function BetAnalysisPage() {
 
               {/* Action Button */}
               <div className="bg-gradient-to-br from-dark-100 to-dark-200 rounded-2xl p-6 glass-effect-strong border border-gray-700/50">
-                <button className="w-full btn-premium py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105">
+                <button className="w-full btn-secondary py-4 px-6 rounded-xl font-bold text-lg">
                   <span className="flex items-center justify-center gap-3">
                     <TrendingUp className="w-6 h-6" />
                     View Market Data
@@ -439,7 +439,7 @@ export default function BetAnalysisPage() {
               <div className="text-6xl mb-6">🔍</div>
               <h2 className="text-2xl font-bold text-white mb-4">Sample Research</h2>
               <p className="text-gray-300 leading-relaxed mb-8">{bet.explanation}</p>
-              <button className="btn-premium py-4 px-8 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105">
+              <button className="btn-secondary py-4 px-8 rounded-xl font-bold text-lg">
                 <span className="flex items-center justify-center gap-3">
                   <TrendingUp className="w-6 h-6" />
                   View Market Data

@@ -84,17 +84,14 @@ export interface BetTip {
 
 export interface User {
   id: string;
+  name?: string;
   email: string;
   hasActiveSubscription: boolean;
   freeBetUsedToday: boolean;
   location?: string;
+  createdAt?: string;
 }
 
-export interface AffiliateLink {
-  bookmaker: string;
-  url: string;
-  regions: string[];
-}
 
 export type RiskLevel = 'low' | 'medium' | 'high';
 export type BetType = BetTip['type'];
