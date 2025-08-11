@@ -51,9 +51,13 @@ export async function GET(request: NextRequest) {
     query += ` ORDER BY bt.published_at DESC LIMIT $${queryParams.length + 1}`;
     queryParams.push(limit);
 
-    // TEMPORARY: Force sample data until real tips are generated
-    // TODO: Remove this when automation pipeline is working
-    const bets: any[] = []; // Force empty to always use sample data
+    // Try to get real betting tips from database first
+    const dbService = new DatabaseService();
+    const bets = await dbService.getBettingTips({ 
+      limit, 
+      includeUnpublished: includeUnpublished,
+      premiumOnly: premiumOnly 
+    });
     
     // Always return sample data for now to ensure consistent experience
     if (bets.length === 0) {
