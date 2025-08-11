@@ -183,8 +183,17 @@ export class AutomationPipeline {
     // Filter matches that are suitable for analysis
     const suitableMatches = matches.filter(match => {
       const hoursUntilMatch = (new Date(match.matchDate).getTime() - Date.now()) / (1000 * 60 * 60);
-      return hoursUntilMatch >= 6 && hoursUntilMatch <= 72; // Between 6 hours and 3 days
+      // Between 6 hours and 21 days to accommodate pre-season schedule gaps
+      const isSuitableTime = hoursUntilMatch >= 6 && hoursUntilMatch <= (21 * 24); 
+      
+      if (!isSuitableTime) {
+        console.log(`⏰ Match ${match.homeTeam} vs ${match.awayTeam} filtered: ${hoursUntilMatch.toFixed(1)}h away (need 6-504h)`);
+      }
+      
+      return isSuitableTime;
     });
+    
+    console.log(`🎯 Filtered to ${suitableMatches.length} suitable matches from ${matches.length} total`);
     
     // Return top matches based on config
     return suitableMatches.slice(0, config.maxTipsPerDay * 2); // Analyze more than we need
